@@ -1,0 +1,21 @@
+name: player
+description: Vela Video & Audio Player Module - Gesture control matrix, hardware decoding interfaces, and smart subtitle overlay canvas.
+version: 1.0.0
+publish_to: none
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+  flutter: ">=3.24.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  subtitle_core:
+    path: ../subtitle_core
+  design_system:
+    path: ../design_system
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  lints: ^4.0.0

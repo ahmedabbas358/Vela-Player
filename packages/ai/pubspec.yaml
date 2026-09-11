@@ -1,0 +1,16 @@
+name: ai
+description: Vela AI Gateway Client - Speech-to-text generation, contextual translation, speaker diarization, and character vision intelligence.
+version: 1.0.0
+publish_to: none
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+
+dependencies:
+  meta: ^1.15.0
+  subtitle_core:
+    path: ../subtitle_core
+
+dev_dependencies:
+  test: ^1.25.0
+  lints: ^4.0.0
