@@ -38,7 +38,14 @@ jobs:
           dart --version
 
       - name: Install Project Dependencies
-        run: flutter pub get
+        run: |
+          flutter pub get
+          for dir in packages/*/; do
+            if [ -f "$dir/pubspec.yaml" ]; then
+              echo "Resolving dependencies for $dir..."
+              (cd "$dir" && flutter pub get)
+            fi
+          done
 
       - name: Check Code Formatting
         run: dart format --output=none --set-exit-if-changed .
@@ -47,7 +54,9 @@ jobs:
         run: flutter analyze --no-fatal-infos
 
       - name: Run Unit & Widget Tests
-        run: flutter test --coverage
+        run: |
+          flutter test
+          (cd packages/subtitle_core && flutter test)
 
       - name: Build Android Release Bundle Validation (Dry Run)
         run: flutter build appbundle --release --no-pub
