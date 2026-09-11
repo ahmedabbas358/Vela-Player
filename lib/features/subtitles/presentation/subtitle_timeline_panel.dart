@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../../../core/constants/app_colors.dart';
 import '../../../core/subtitles/subtitle_manager.dart';
 
@@ -35,7 +36,11 @@ class SubtitleTimelinePanel extends ConsumerWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.subtitles_off_outlined, size: 48, color: AppColors.textMuted),
+              Icon(
+                Icons.subtitles_off_outlined,
+                size: 48,
+                color: AppColors.textMuted,
+              ),
               SizedBox(height: 12),
               Text(
                 'لا يوجد ملف ترجمة محمّل',
@@ -79,7 +84,9 @@ class SubtitleTimelinePanel extends ConsumerWidget {
                     style: TextStyle(
                       fontSize: 10,
                       fontWeight: FontWeight.bold,
-                      color: isActive ? AppColors.primaryLight : AppColors.textMuted,
+                      color: isActive
+                          ? AppColors.primaryLight
+                          : AppColors.textMuted,
                     ),
                   ),
                   const SizedBox(width: 10),
@@ -88,15 +95,21 @@ class SubtitleTimelinePanel extends ConsumerWidget {
                     style: TextStyle(
                       fontSize: 10,
                       fontFamily: 'monospace',
-                      color: isActive ? AppColors.accent : AppColors.textSecondary,
+                      color: isActive
+                          ? AppColors.accent
+                          : AppColors.textSecondary,
                     ),
                   ),
                   if (cue.speaker != null) ...[
                     const Spacer(),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 2,
+                      ),
                       decoration: BoxDecoration(
-                        color: (cue.speakerColor ?? AppColors.accent).withValues(alpha: 0.2),
+                        color: (cue.speakerColor ?? AppColors.accent)
+                            .withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
@@ -117,7 +130,9 @@ class SubtitleTimelinePanel extends ConsumerWidget {
                 cue.text,
                 style: TextStyle(
                   fontSize: 13,
-                  color: isActive ? AppColors.textPrimary : AppColors.textSecondary,
+                  color: isActive
+                      ? AppColors.textPrimary
+                      : AppColors.textSecondary,
                   fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
                 ),
               ),

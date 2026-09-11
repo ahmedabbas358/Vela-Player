@@ -2,11 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:file_picker/file_picker.dart';
+
 import '../../../core/constants/app_colors.dart';
 import '../../player/presentation/video_player_screen.dart';
 
 /// Supported video extensions
-const _videoExtensions = ['mp4', 'mkv', 'avi', 'mov', 'webm', 'flv', 'ts', '3gp'];
+const _videoExtensions = [
+  'mp4',
+  'mkv',
+  'avi',
+  'mov',
+  'webm',
+  'flv',
+  'ts',
+  '3gp',
+];
 
 /// A model for a recently opened video file
 class MediaItem {
@@ -30,10 +40,7 @@ class RecentMediaNotifier extends StateNotifier<List<MediaItem>> {
   RecentMediaNotifier() : super([]);
 
   void addOrUpdate(MediaItem item) {
-    state = [
-      item,
-      ...state.where((m) => m.path != item.path),
-    ];
+    state = [item, ...state.where((m) => m.path != item.path)];
     // Keep at most 50 recent items
     if (state.length > 50) {
       state = state.sublist(0, 50);
@@ -49,8 +56,8 @@ class RecentMediaNotifier extends StateNotifier<List<MediaItem>> {
 
 final recentMediaProvider =
     StateNotifierProvider<RecentMediaNotifier, List<MediaItem>>((ref) {
-  return RecentMediaNotifier();
-});
+      return RecentMediaNotifier();
+    });
 
 class MediaLibraryScreen extends ConsumerWidget {
   const MediaLibraryScreen({super.key});
@@ -65,16 +72,15 @@ class MediaLibraryScreen extends ConsumerWidget {
       final path = files.first.path!;
       final name = files.first.name;
 
-      ref.read(recentMediaProvider.notifier).addOrUpdate(
+      ref
+          .read(recentMediaProvider.notifier)
+          .addOrUpdate(
             MediaItem(path: path, name: name, lastOpened: DateTime.now()),
           );
 
       Navigator.of(context).push(
         MaterialPageRoute(
-          builder: (_) => VideoPlayerScreen(
-            videoPath: path,
-            videoTitle: name,
-          ),
+          builder: (_) => VideoPlayerScreen(videoPath: path, videoTitle: name),
         ),
       );
     }
@@ -95,7 +101,10 @@ class MediaLibraryScreen extends ConsumerWidget {
         actions: [
           if (recentMedia.isNotEmpty)
             IconButton(
-              icon: const Icon(Icons.delete_sweep_outlined, color: Colors.white54),
+              icon: const Icon(
+                Icons.delete_sweep_outlined,
+                color: Colors.white54,
+              ),
               tooltip: 'مسح السجل',
               onPressed: () {
                 ref.read(recentMediaProvider.notifier).clearAll();
@@ -235,10 +244,15 @@ class MediaLibraryScreen extends ConsumerWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             IconButton(
-              icon: const Icon(Icons.play_circle_filled, color: AppColors.primaryLight),
+              icon: const Icon(
+                Icons.play_circle_filled,
+                color: AppColors.primaryLight,
+              ),
               tooltip: 'تشغيل',
               onPressed: () {
-                ref.read(recentMediaProvider.notifier).addOrUpdate(
+                ref
+                    .read(recentMediaProvider.notifier)
+                    .addOrUpdate(
                       MediaItem(
                         path: item.path,
                         name: item.name,

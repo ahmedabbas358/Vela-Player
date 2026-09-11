@@ -31,7 +31,8 @@ class CharacterProfile {
         'confidence': confidence,
       };
 
-  factory CharacterProfile.fromJson(Map<String, dynamic> json) => CharacterProfile(
+  factory CharacterProfile.fromJson(Map<String, dynamic> json) =>
+      CharacterProfile(
         characterId: json['characterId'] as String,
         name: json['name'] as String,
         gender: json['gender'] as String?,

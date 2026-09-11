@@ -55,7 +55,8 @@ class AIJobResponse {
     this.errorMessage,
   });
 
-  bool get isDone => status == AIJobStatus.completed || status == AIJobStatus.failed;
+  bool get isDone =>
+      status == AIJobStatus.completed || status == AIJobStatus.failed;
 
   factory AIJobResponse.fromJson(Map<String, dynamic> json) => AIJobResponse(
         jobId: json['jobId'] as String,

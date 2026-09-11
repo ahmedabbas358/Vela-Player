@@ -9,7 +9,8 @@ class SubtitleExporter {
     for (int i = 0; i < cues.length; i++) {
       final cue = cues[i];
       buffer.writeln(i + 1);
-      buffer.writeln('${_formatSrtTimestamp(cue.startMs)} --> ${_formatSrtTimestamp(cue.endMs)}');
+      buffer.writeln(
+          '${_formatSrtTimestamp(cue.startMs)} --> ${_formatSrtTimestamp(cue.endMs)}');
 
       if (cue.speakerName != null && cue.speakerName!.isNotEmpty) {
         buffer.writeln('${cue.speakerName}: ${cue.text}');
@@ -30,7 +31,8 @@ class SubtitleExporter {
 
     for (int i = 0; i < cues.length; i++) {
       final cue = cues[i];
-      buffer.writeln('${_formatVttTimestamp(cue.startMs)} --> ${_formatVttTimestamp(cue.endMs)}');
+      buffer.writeln(
+          '${_formatVttTimestamp(cue.startMs)} --> ${_formatVttTimestamp(cue.endMs)}');
 
       if (cue.speakerName != null && cue.speakerName!.isNotEmpty) {
         buffer.writeln('<v ${cue.speakerName}>${cue.text}');

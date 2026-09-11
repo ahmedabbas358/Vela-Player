@@ -1,6 +1,7 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../../../core/constants/app_colors.dart';
 import '../../../core/subtitles/subtitle_manager.dart';
 import '../../player/presentation/video_player_screen.dart';
@@ -54,10 +55,9 @@ class HomeScreen extends ConsumerWidget {
 
   void _playDemoVideo(BuildContext context, WidgetRef ref) {
     // Pre-load demo subtitle
-    ref.read(subtitleProvider.notifier).loadContent(
-          sampleSrtContent,
-          fileName: 'demo_subtitles_ar.srt',
-        );
+    ref
+        .read(subtitleProvider.notifier)
+        .loadContent(sampleSrtContent, fileName: 'demo_subtitles_ar.srt');
 
     Navigator.of(context).push(
       MaterialPageRoute(
@@ -81,7 +81,10 @@ class HomeScreen extends ConsumerWidget {
             pinned: true,
             backgroundColor: AppColors.surface,
             flexibleSpace: FlexibleSpaceBar(
-              titlePadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+              titlePadding: const EdgeInsets.symmetric(
+                horizontal: 20,
+                vertical: 16,
+              ),
               title: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -93,7 +96,11 @@ class HomeScreen extends ConsumerWidget {
                       ),
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: const Icon(Icons.play_arrow_rounded, color: Colors.white, size: 20),
+                    child: const Icon(
+                      Icons.play_arrow_rounded,
+                      color: Colors.white,
+                      size: 20,
+                    ),
                   ),
                   const SizedBox(width: 10),
                   const Text(
@@ -135,7 +142,11 @@ class HomeScreen extends ConsumerWidget {
                     ),
                     child: Row(
                       children: [
-                        const Icon(Icons.auto_awesome, color: Colors.amber, size: 28),
+                        const Icon(
+                          Icons.auto_awesome,
+                          color: Colors.amber,
+                          size: 28,
+                        ),
                         const SizedBox(width: 14),
                         Expanded(
                           child: Column(
@@ -210,7 +221,9 @@ class HomeScreen extends ConsumerWidget {
                           colors: [Color(0xFF312E81), Color(0xFF1E1B4B)],
                         ),
                         borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: AppColors.primaryLight.withValues(alpha: 0.4)),
+                        border: Border.all(
+                          color: AppColors.primaryLight.withValues(alpha: 0.4),
+                        ),
                       ),
                       child: Row(
                         children: [
@@ -220,7 +233,11 @@ class HomeScreen extends ConsumerWidget {
                               color: Colors.white12,
                               borderRadius: BorderRadius.circular(12),
                             ),
-                            child: const Icon(Icons.smart_display_rounded, color: Colors.white, size: 28),
+                            child: const Icon(
+                              Icons.smart_display_rounded,
+                              color: Colors.white,
+                              size: 28,
+                            ),
                           ),
                           const SizedBox(width: 16),
                           Expanded(
@@ -238,12 +255,19 @@ class HomeScreen extends ConsumerWidget {
                                 SizedBox(height: 4),
                                 Text(
                                   'اختبر الترجمة التفاعلية والإيماءات الآن',
-                                  style: TextStyle(fontSize: 12, color: Colors.white70),
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.white70,
+                                  ),
                                 ),
                               ],
                             ),
                           ),
-                          const Icon(Icons.arrow_forward_ios, color: Colors.white54, size: 16),
+                          const Icon(
+                            Icons.arrow_forward_ios,
+                            color: Colors.white54,
+                            size: 16,
+                          ),
                         ],
                       ),
                     ),
@@ -320,7 +344,10 @@ class HomeScreen extends ConsumerWidget {
             const SizedBox(height: 4),
             Text(
               subtitle,
-              style: const TextStyle(fontSize: 11, color: AppColors.textSecondary),
+              style: const TextStyle(
+                fontSize: 11,
+                color: AppColors.textSecondary,
+              ),
             ),
           ],
         ),
@@ -357,9 +384,21 @@ class HomeScreen extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 13,
+                  ),
+                ),
                 const SizedBox(height: 2),
-                Text(description, style: const TextStyle(fontSize: 11, color: AppColors.textSecondary)),
+                Text(
+                  description,
+                  style: const TextStyle(
+                    fontSize: 11,
+                    color: AppColors.textSecondary,
+                  ),
+                ),
               ],
             ),
           ),

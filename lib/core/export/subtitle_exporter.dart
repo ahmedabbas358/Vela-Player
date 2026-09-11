@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+
 import '../subtitles/models/subtitle_cue.dart';
 
 /// Utility to export subtitle cues back to SRT format
@@ -12,7 +13,8 @@ class SubtitleExporter {
       final cue = cues[i];
       buffer.writeln(i + 1);
       buffer.writeln(
-          '${_formatTimestamp(cue.startTime)} --> ${_formatTimestamp(cue.endTime)}');
+        '${_formatTimestamp(cue.startTime)} --> ${_formatTimestamp(cue.endTime)}',
+      );
 
       // Prepend speaker if available
       if (cue.speaker != null && cue.speaker!.isNotEmpty) {
@@ -43,7 +45,8 @@ class SubtitleExporter {
       final cue = cues[i];
       buffer.writeln(i + 1);
       buffer.writeln(
-          '${_formatVttTimestamp(cue.startTime)} --> ${_formatVttTimestamp(cue.endTime)}');
+        '${_formatVttTimestamp(cue.startTime)} --> ${_formatVttTimestamp(cue.endTime)}',
+      );
 
       if (cue.speaker != null && cue.speaker!.isNotEmpty) {
         buffer.writeln('<v ${cue.speaker}>${cue.text}</v>');

@@ -49,8 +49,10 @@ class SrtParser {
       // Check for speaker pattern, e.g. "Name: Text", "[Name]: Text", or "[Name] Text"
       String cleanText = text;
       String? speaker;
-      final speakerMatch = RegExp(r'^(?:\[([^\]]+)\]:?|([A-Za-z0-9_\u0600-\u06FF\s]+):)\s*(.*)$', dotAll: true)
-          .firstMatch(text);
+      final speakerMatch = RegExp(
+        r'^(?:\[([^\]]+)\]:?|([A-Za-z0-9_\u0600-\u06FF\s]+):)\s*(.*)$',
+        dotAll: true,
+      ).firstMatch(text);
       if (speakerMatch != null) {
         speaker = (speakerMatch.group(1) ?? speakerMatch.group(2))?.trim();
         cleanText = speakerMatch.group(3)?.trim() ?? text;
@@ -87,8 +89,9 @@ class SrtParser {
         final minutes = int.parse(parts[1]);
         final secParts = parts[2].split('.');
         final seconds = int.parse(secParts[0]);
-        final milliseconds =
-            secParts.length > 1 ? int.parse(secParts[1].padRight(3, '0').substring(0, 3)) : 0;
+        final milliseconds = secParts.length > 1
+            ? int.parse(secParts[1].padRight(3, '0').substring(0, 3))
+            : 0;
 
         return Duration(
           hours: hours,

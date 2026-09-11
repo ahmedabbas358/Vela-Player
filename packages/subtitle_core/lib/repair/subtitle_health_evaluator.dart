@@ -73,11 +73,13 @@ class SubtitleHealthEvaluator {
     }
     if (excessiveSpeed > 0) {
       penalties += (excessiveSpeed * 2).clamp(5, 20);
-      issues.add('$excessiveSpeed cues exceed comfortable reading speed (>21 cps)');
+      issues.add(
+          '$excessiveSpeed cues exceed comfortable reading speed (>21 cps)');
     }
     if (brokenEncodings > 0) {
       penalties += (brokenEncodings * 5).clamp(10, 35);
-      issues.add('$brokenEncodings cues contain broken text encoding artifacts');
+      issues
+          .add('$brokenEncodings cues contain broken text encoding artifacts');
     }
 
     final score = (100 - penalties).clamp(0, 100);
@@ -99,7 +101,7 @@ class SubtitleHealthEvaluator {
     if (cues.isEmpty) return [];
 
     final repaired = <UnifiedSubtitleCue>[];
-    
+
     for (int i = 0; i < cues.length; i++) {
       var cue = cues[i];
 
@@ -120,7 +122,8 @@ class SubtitleHealthEvaluator {
         final prev = repaired[prevIndex];
         if (cue.startMs < prev.endMs) {
           // Adjust previous cue to end 25ms before current starts
-          final adjustedPrevEnd = (cue.startMs - 25).clamp(prev.startMs + 300, cue.startMs);
+          final adjustedPrevEnd =
+              (cue.startMs - 25).clamp(prev.startMs + 300, cue.startMs);
           repaired[prevIndex] = prev.copyWith(endMs: adjustedPrevEnd);
         }
       }

@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/legacy.dart';
+
 import 'models/subtitle_cue.dart';
 import 'models/subtitle_style.dart';
 import 'parsers/subtitle_parser_factory.dart';
@@ -71,10 +72,7 @@ class SubtitleNotifier extends StateNotifier<SubtitleState> {
     final cue = _findCueAt(adjustedPosition);
 
     if (cue != state.activeCue) {
-      state = state.copyWith(
-        activeCue: cue,
-        clearActiveCue: cue == null,
-      );
+      state = state.copyWith(activeCue: cue, clearActiveCue: cue == null);
     }
   }
 
@@ -129,7 +127,8 @@ class SubtitleNotifier extends StateNotifier<SubtitleState> {
   }
 }
 
-final subtitleProvider =
-    StateNotifierProvider<SubtitleNotifier, SubtitleState>((ref) {
-  return SubtitleNotifier();
-});
+final subtitleProvider = StateNotifierProvider<SubtitleNotifier, SubtitleState>(
+  (ref) {
+    return SubtitleNotifier();
+  },
+);

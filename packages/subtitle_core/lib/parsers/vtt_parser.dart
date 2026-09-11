@@ -49,7 +49,8 @@ class VttParser {
       final endS = int.parse(match.group(7)!);
       final endMs = int.parse(match.group(8)!);
 
-      final startTime = (startH * 3600000) + (startM * 60000) + (startS * 1000) + startMs;
+      final startTime =
+          (startH * 3600000) + (startM * 60000) + (startS * 1000) + startMs;
       final endTime = (endH * 3600000) + (endM * 60000) + (endS * 1000) + endMs;
 
       final textLines = lines.sublist(timeLineIndex + 1);
@@ -59,7 +60,8 @@ class VttParser {
       String? speaker;
       String cleanText = rawText;
 
-      final vttVoiceMatch = RegExp(r'<v\s+([^>]+)>(.*)', dotAll: true).firstMatch(rawText);
+      final vttVoiceMatch =
+          RegExp(r'<v\s+([^>]+)>(.*)', dotAll: true).firstMatch(rawText);
       if (vttVoiceMatch != null) {
         speaker = vttVoiceMatch.group(1)?.trim();
         cleanText = vttVoiceMatch.group(2)?.trim() ?? rawText;

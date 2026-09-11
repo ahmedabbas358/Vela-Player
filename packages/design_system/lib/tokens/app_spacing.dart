@@ -15,7 +15,8 @@ class AppSpacing {
   static const double s16 = 64.0;
 
   // Horizontal Gutters
-  static const EdgeInsets screenPadding = EdgeInsets.symmetric(horizontal: 16.0);
+  static const EdgeInsets screenPadding =
+      EdgeInsets.symmetric(horizontal: 16.0);
   static const EdgeInsets cardPadding = EdgeInsets.all(16.0);
   static const EdgeInsets compactCardPadding = EdgeInsets.all(12.0);
 

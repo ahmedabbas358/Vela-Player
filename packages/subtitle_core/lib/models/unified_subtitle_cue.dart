@@ -41,7 +41,8 @@ class UnifiedSubtitleCue {
   }
 
   /// Check if the cue is active at a specific player position in milliseconds
-  bool isActiveAt(int positionMs) => positionMs >= startMs && positionMs <= endMs;
+  bool isActiveAt(int positionMs) =>
+      positionMs >= startMs && positionMs <= endMs;
 
   UnifiedSubtitleCue copyWith({
     String? id,

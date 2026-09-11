@@ -55,8 +55,10 @@ class SrtParser {
       String? speaker;
       String cleanText = rawText;
 
-      final speakerMatch = RegExp(r'^<v\s+([^>]+)>(.*)$', dotAll: true).firstMatch(rawText) ??
-          RegExp(r'^([A-Za-z0-9_\-\s]{2,20}):\s+(.*)$', dotAll: true).firstMatch(rawText);
+      final speakerMatch =
+          RegExp(r'^<v\s+([^>]+)>(.*)$', dotAll: true).firstMatch(rawText) ??
+              RegExp(r'^([A-Za-z0-9_\-\s]{2,20}):\s+(.*)$', dotAll: true)
+                  .firstMatch(rawText);
 
       if (speakerMatch != null) {
         speaker = speakerMatch.group(1)?.trim();
@@ -84,7 +86,11 @@ class SrtParser {
     return cues;
   }
 
-  static int _parseTimestamp(int hours, int minutes, int seconds, int milliseconds) {
-    return (hours * 3600000) + (minutes * 60000) + (seconds * 1000) + milliseconds;
+  static int _parseTimestamp(
+      int hours, int minutes, int seconds, int milliseconds) {
+    return (hours * 3600000) +
+        (minutes * 60000) +
+        (seconds * 1000) +
+        milliseconds;
   }
 }

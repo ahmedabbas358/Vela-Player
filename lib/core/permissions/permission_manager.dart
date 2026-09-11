@@ -1,11 +1,6 @@
 import 'package:flutter/material.dart';
 
-enum VelaPermission {
-  notifications,
-  microphone,
-  photosAddOnly,
-  localNetwork,
-}
+enum VelaPermission { notifications, microphone, photosAddOnly, localNetwork }
 
 enum PermissionStatusState {
   notRequested,
@@ -52,12 +47,20 @@ class PermissionManager {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Row(
           children: [
-            const Icon(Icons.shield_outlined, color: Color(0xFF6366F1), size: 24),
+            const Icon(
+              Icons.shield_outlined,
+              color: Color(0xFF6366F1),
+              size: 24,
+            ),
             const SizedBox(width: 8),
             Expanded(
               child: Text(
                 title,
-                style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ],
@@ -66,7 +69,10 @@ class PermissionManager {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(explanation, style: const TextStyle(color: Color(0xFF94A3B8), fontSize: 14)),
+            Text(
+              explanation,
+              style: const TextStyle(color: Color(0xFF94A3B8), fontSize: 14),
+            ),
             const SizedBox(height: 12),
             ...bulletPoints.map(
               (pt) => Padding(
@@ -74,9 +80,21 @@ class PermissionManager {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('• ', style: TextStyle(color: Color(0xFF6366F1), fontWeight: FontWeight.bold)),
+                    const Text(
+                      '• ',
+                      style: TextStyle(
+                        color: Color(0xFF6366F1),
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                     Expanded(
-                      child: Text(pt, style: const TextStyle(color: Color(0xFFF8FAFC), fontSize: 13)),
+                      child: Text(
+                        pt,
+                        style: const TextStyle(
+                          color: Color(0xFFF8FAFC),
+                          fontSize: 13,
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -87,14 +105,19 @@ class PermissionManager {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('Not Now', style: TextStyle(color: Color(0xFF94A3B8))),
+            child: const Text(
+              'Not Now',
+              style: TextStyle(color: Color(0xFF94A3B8)),
+            ),
           ),
           ElevatedButton(
             onPressed: () => Navigator.of(ctx).pop(true),
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF6366F1),
               foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
             ),
             child: const Text('Continue'),
           ),

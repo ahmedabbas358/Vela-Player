@@ -6,11 +6,7 @@ import 'package:flutter/material.dart';
 void main() {
   testWidgets('LumaSub HomeScreen smoke test', (WidgetTester tester) async {
     await tester.pumpWidget(
-      const ProviderScope(
-        child: MaterialApp(
-          home: HomeScreen(),
-        ),
-      ),
+      const ProviderScope(child: MaterialApp(home: HomeScreen())),
     );
 
     // Verify presence of title and key action cards

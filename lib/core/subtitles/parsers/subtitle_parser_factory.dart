@@ -38,7 +38,11 @@ class SubtitleParserFactory {
 
   /// Supported subtitle file extensions
   static const List<String> supportedExtensions = [
-    'srt', 'vtt', 'webvtt', 'ass', 'ssa',
+    'srt',
+    'vtt',
+    'webvtt',
+    'ass',
+    'ssa',
   ];
 
   static String? _extractExtension(String? fileName) {

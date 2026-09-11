@@ -59,7 +59,9 @@ class HealthBadge extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(
-            score >= 90 ? Icons.verified_rounded : Icons.health_and_safety_rounded,
+            score >= 90
+                ? Icons.verified_rounded
+                : Icons.health_and_safety_rounded,
             size: 16,
             color: color,
           ),

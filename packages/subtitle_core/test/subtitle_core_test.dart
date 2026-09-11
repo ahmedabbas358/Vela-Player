@@ -46,8 +46,14 @@ Dialogue: 0,0:01:20.50,0:01:23.00,Default,Eren,0,0,0,,{\\pos(192,240)}Hear me!\\
   group('SubtitleHealthEvaluator', () {
     test('detects overlapping cues and calculates health score', () {
       final cues = [
-        const UnifiedSubtitleCue(id: '1', index: 1, startMs: 1000, endMs: 3000, text: 'First line'),
-        const UnifiedSubtitleCue(id: '2', index: 2, startMs: 2500, endMs: 4000, text: 'Overlapping line'),
+        const UnifiedSubtitleCue(
+            id: '1', index: 1, startMs: 1000, endMs: 3000, text: 'First line'),
+        const UnifiedSubtitleCue(
+            id: '2',
+            index: 2,
+            startMs: 2500,
+            endMs: 4000,
+            text: 'Overlapping line'),
       ];
 
       final report = SubtitleHealthEvaluator.evaluate(cues);
@@ -62,8 +68,10 @@ Dialogue: 0,0:01:20.50,0:01:23.00,Default,Eren,0,0,0,,{\\pos(192,240)}Hear me!\\
   group('SubtitleDriftCorrector', () {
     test('applies global offset and drift interpolation', () {
       final cues = [
-        const UnifiedSubtitleCue(id: '1', index: 1, startMs: 10000, endMs: 12000, text: 'Hello'),
-        const UnifiedSubtitleCue(id: '2', index: 2, startMs: 50000, endMs: 52000, text: 'World'),
+        const UnifiedSubtitleCue(
+            id: '1', index: 1, startMs: 10000, endMs: 12000, text: 'Hello'),
+        const UnifiedSubtitleCue(
+            id: '2', index: 2, startMs: 50000, endMs: 52000, text: 'World'),
       ];
 
       final shifted = SubtitleDriftCorrector.applyGlobalOffset(cues, 1500);

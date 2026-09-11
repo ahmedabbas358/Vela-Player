@@ -15,7 +15,8 @@ class DeviceEventManager {
   ThermalState get thermal => _thermal;
   double get batteryLevel => _batteryLevel;
 
-  bool get isHeavyProcessingSafe => _batteryLevel > 0.15 && _thermal != ThermalState.critical;
+  bool get isHeavyProcessingSafe =>
+      _batteryLevel > 0.15 && _thermal != ThermalState.critical;
 
   bool get allowCloudAIUpload {
     if (_network == NetworkType.offline) return false;

@@ -20,13 +20,22 @@ void main() {
       final cues = SrtParser.parse(srtData);
       expect(cues.length, equals(2));
 
-      expect(cues[0].startTime, equals(const Duration(seconds: 1, milliseconds: 500)));
+      expect(
+        cues[0].startTime,
+        equals(const Duration(seconds: 1, milliseconds: 500)),
+      );
       expect(cues[0].endTime, equals(const Duration(seconds: 4)));
       expect(cues[0].speaker, equals('مذيع'));
       expect(cues[0].text, equals('مرحباً بكم في نشرة الأخبار.'));
 
-      expect(cues[1].startTime, equals(const Duration(seconds: 5, milliseconds: 200)));
-      expect(cues[1].endTime, equals(const Duration(seconds: 8, milliseconds: 750)));
+      expect(
+        cues[1].startTime,
+        equals(const Duration(seconds: 5, milliseconds: 200)),
+      );
+      expect(
+        cues[1].endTime,
+        equals(const Duration(seconds: 8, milliseconds: 750)),
+      );
       expect(cues[1].speaker, isNull);
       expect(cues[1].text, equals('اليوم نقدم لكم أفضل مشغل ترجمة.'));
     });
@@ -47,7 +56,10 @@ Enjoying the smart video player.
       expect(cues.length, equals(2));
 
       expect(cues[0].startTime, equals(const Duration(seconds: 1)));
-      expect(cues[0].endTime, equals(const Duration(seconds: 3, milliseconds: 500)));
+      expect(
+        cues[0].endTime,
+        equals(const Duration(seconds: 3, milliseconds: 500)),
+      );
       expect(cues[0].speaker, equals('Alice'));
       expect(cues[0].text, equals('Hello from WebVTT!'));
     });
@@ -96,7 +108,10 @@ Cue Two
 
     test('SubtitleStyle preset application', () {
       final notifier = SubtitleNotifier();
-      expect(notifier.state.style.textColor, equals(SubtitleStyle.classicWhite.textColor));
+      expect(
+        notifier.state.style.textColor,
+        equals(SubtitleStyle.classicWhite.textColor),
+      );
 
       notifier.updateStyle(SubtitleStyle.animeYellow);
       expect(notifier.state.style.fontFamily, equals('Tajawal'));

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:media_kit/media_kit.dart';
+
 import 'core/constants/app_colors.dart';
 import 'features/home/presentation/home_screen.dart';
 import 'features/library/presentation/media_library_screen.dart';
@@ -11,11 +12,7 @@ void main() {
   // Initialize media_kit native backend (libmpv)
   MediaKit.ensureInitialized();
 
-  runApp(
-    const ProviderScope(
-      child: LumaSubApp(),
-    ),
-  );
+  runApp(const ProviderScope(child: LumaSubApp()));
 }
 
 class LumaSubApp extends StatelessWidget {
@@ -61,24 +58,16 @@ class MainShell extends StatefulWidget {
 class _MainShellState extends State<MainShell> {
   int _currentIndex = 0;
 
-  final List<Widget> _screens = const [
-    HomeScreen(),
-    MediaLibraryScreen(),
-  ];
+  final List<Widget> _screens = const [HomeScreen(), MediaLibraryScreen()];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: IndexedStack(
-        index: _currentIndex,
-        children: _screens,
-      ),
+      body: IndexedStack(index: _currentIndex, children: _screens),
       bottomNavigationBar: Container(
         decoration: const BoxDecoration(
           color: AppColors.surface,
-          border: Border(
-            top: BorderSide(color: Colors.white10, width: 0.5),
-          ),
+          border: Border(top: BorderSide(color: Colors.white10, width: 0.5)),
         ),
         child: NavigationBar(
           backgroundColor: AppColors.surface,
@@ -97,7 +86,10 @@ class _MainShellState extends State<MainShell> {
             ),
             NavigationDestination(
               icon: Icon(Icons.video_library_outlined),
-              selectedIcon: Icon(Icons.video_library, color: AppColors.primaryLight),
+              selectedIcon: Icon(
+                Icons.video_library,
+                color: AppColors.primaryLight,
+              ),
               label: 'المكتبة',
             ),
           ],

@@ -20,7 +20,8 @@ class VttParser {
       if (lines.isEmpty) continue;
 
       // Skip WEBVTT header block
-      if (lines[0].toUpperCase().startsWith('WEBVTT') || lines[0].startsWith('NOTE')) {
+      if (lines[0].toUpperCase().startsWith('WEBVTT') ||
+          lines[0].startsWith('NOTE')) {
         continue;
       }
 
@@ -55,10 +56,14 @@ class VttParser {
       String cleanText = rawText;
       String? speaker;
 
-      final voiceTagMatch = RegExp(r'<v(?:\.[\w-]+)?\s+([^>]+)>(.*)', dotAll: true).firstMatch(rawText);
+      final voiceTagMatch = RegExp(
+        r'<v(?:\.[\w-]+)?\s+([^>]+)>(.*)',
+        dotAll: true,
+      ).firstMatch(rawText);
       if (voiceTagMatch != null) {
         speaker = voiceTagMatch.group(1)?.trim();
-        cleanText = voiceTagMatch.group(2)?.replaceAll(RegExp(r'</v>'), '') ?? rawText;
+        cleanText =
+            voiceTagMatch.group(2)?.replaceAll(RegExp(r'</v>'), '') ?? rawText;
       }
 
       // Remove general HTML formatting tags for plain rendering (keep text)

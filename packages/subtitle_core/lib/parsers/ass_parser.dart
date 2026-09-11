@@ -6,7 +6,8 @@ class AssParser {
   static List<UnifiedSubtitleCue> parse(String content) {
     if (content.isEmpty) return [];
 
-    final lines = content.replaceAll('\r\n', '\n').replaceAll('\r', '\n').split('\n');
+    final lines =
+        content.replaceAll('\r\n', '\n').replaceAll('\r', '\n').split('\n');
     final List<UnifiedSubtitleCue> cues = [];
 
     bool inEventsSection = false;
@@ -27,7 +28,8 @@ class AssParser {
 
       if (line.startsWith('Format:')) {
         final formatStr = line.substring('Format:'.length).trim();
-        formatFields = formatStr.split(',').map((f) => f.trim().toLowerCase()).toList();
+        formatFields =
+            formatStr.split(',').map((f) => f.trim().toLowerCase()).toList();
         continue;
       }
 
@@ -52,7 +54,18 @@ class AssParser {
     // Default ASS Format fallback if header was omitted
     final fields = formatFields.isNotEmpty
         ? formatFields
-        : ['layer', 'start', 'end', 'style', 'name', 'marginl', 'marginr', 'marginv', 'effect', 'text'];
+        : [
+            'layer',
+            'start',
+            'end',
+            'style',
+            'name',
+            'marginl',
+            'marginr',
+            'marginv',
+            'effect',
+            'text'
+          ];
 
     final textIndex = fields.indexOf('text');
     final startIndex = fields.indexOf('start');
@@ -69,7 +82,9 @@ class AssParser {
     final startMs = _parseAssTimestamp(parts[startIndex].trim());
     final endMs = _parseAssTimestamp(parts[endIndex].trim());
     final styleName = styleIndex != -1 ? parts[styleIndex].trim() : 'default';
-    final speaker = nameIndex != -1 && parts[nameIndex].trim().isNotEmpty ? parts[nameIndex].trim() : null;
+    final speaker = nameIndex != -1 && parts[nameIndex].trim().isNotEmpty
+        ? parts[nameIndex].trim()
+        : null;
 
     final rawText = parts[textIndex].trim();
 
@@ -108,7 +123,8 @@ class AssParser {
 
   static int _parseAssTimestamp(String timestamp) {
     // Format: H:MM:SS.CC or HH:MM:SS.CC (Centiseconds)
-    final match = RegExp(r'(\d+):(\d{2}):(\d{2})[.](\d{2,3})').firstMatch(timestamp);
+    final match =
+        RegExp(r'(\d+):(\d{2}):(\d{2})[.](\d{2,3})').firstMatch(timestamp);
     if (match == null) return 0;
 
     final hours = int.parse(match.group(1)!);

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+
 import '../../../core/subtitles/models/subtitle_cue.dart';
 import '../../../core/subtitles/models/subtitle_style.dart';
 import '../../../core/subtitles/subtitle_manager.dart';
@@ -9,10 +10,7 @@ import '../../../core/subtitles/subtitle_manager.dart';
 class SubtitleOverlay extends ConsumerStatefulWidget {
   final bool enableDrag;
 
-  const SubtitleOverlay({
-    super.key,
-    this.enableDrag = true,
-  });
+  const SubtitleOverlay({super.key, this.enableDrag = true});
 
   @override
   ConsumerState<SubtitleOverlay> createState() => _SubtitleOverlayState();
@@ -60,12 +58,20 @@ class _SubtitleOverlayState extends ConsumerState<SubtitleOverlay> {
 
         // Calculate default position based on style.verticalPositionPercentage
         final defaultY = screenHeight * style.verticalPositionPercentage;
-        final position = _dragOffset ?? style.customOffset ?? Offset(screenWidth / 2, defaultY);
+        final position =
+            _dragOffset ??
+            style.customOffset ??
+            Offset(screenWidth / 2, defaultY);
 
         return Stack(
           children: [
             Positioned(
-              left: widget.enableDrag ? (position.dx - (screenWidth * 0.45)).clamp(16.0, screenWidth - 100.0) : 16.0,
+              left: widget.enableDrag
+                  ? (position.dx - (screenWidth * 0.45)).clamp(
+                      16.0,
+                      screenWidth - 100.0,
+                    )
+                  : 16.0,
               right: widget.enableDrag ? null : 16.0,
               top: (position.dy - 30.0).clamp(20.0, screenHeight - 80.0),
               child: GestureDetector(
@@ -81,9 +87,7 @@ class _SubtitleOverlayState extends ConsumerState<SubtitleOverlay> {
                     : null,
                 child: Center(
                   child: ConstrainedBox(
-                    constraints: BoxConstraints(
-                      maxWidth: screenWidth * 0.9,
-                    ),
+                    constraints: BoxConstraints(maxWidth: screenWidth * 0.9),
                     child: _buildSubtitleText(cue, style),
                   ),
                 ),

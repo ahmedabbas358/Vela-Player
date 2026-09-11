@@ -35,7 +35,10 @@ class AssParser {
       // Parse Format line
       if (trimmed.toLowerCase().startsWith('format:')) {
         final formatStr = trimmed.substring('format:'.length);
-        formatFields = formatStr.split(',').map((f) => f.trim().toLowerCase()).toList();
+        formatFields = formatStr
+            .split(',')
+            .map((f) => f.trim().toLowerCase())
+            .toList();
         continue;
       }
 
@@ -126,7 +129,9 @@ class AssParser {
       final minutes = int.parse(parts[1]);
       final secParts = parts[2].split('.');
       final seconds = int.parse(secParts[0]);
-      final centiseconds = secParts.length > 1 ? int.parse(secParts[1].padRight(2, '0').substring(0, 2)) : 0;
+      final centiseconds = secParts.length > 1
+          ? int.parse(secParts[1].padRight(2, '0').substring(0, 2))
+          : 0;
 
       return Duration(
         hours: hours,

@@ -16,7 +16,7 @@ class SubtitleDriftCorrector {
   }
 
   /// Corrects progressive timeline drift using two anchor calibration points.
-  /// 
+  ///
   /// [t1Ms] and [offset1Ms]: First calibration point time and its desync offset.
   /// [t2Ms] and [offset2Ms]: Second calibration point time and its desync offset.
   static List<UnifiedSubtitleCue> applyDriftCorrection({
@@ -36,7 +36,8 @@ class SubtitleDriftCorrector {
     return cues.map((cue) {
       // Calculate progressive linear offset for start and end
       final double progressStart = (cue.startMs - t1Ms) / timeSpan;
-      final int startShift = (offset1Ms + (progressStart * offsetDelta)).round();
+      final int startShift =
+          (offset1Ms + (progressStart * offsetDelta)).round();
 
       final double progressEnd = (cue.endMs - t1Ms) / timeSpan;
       final int endShift = (offset1Ms + (progressEnd * offsetDelta)).round();

@@ -24,9 +24,12 @@ class SubtitleParserFactory {
 
     // 2. Auto-detect by content inspection
     final trimmed = content.trim();
-    if (trimmed.startsWith('WEBVTT') || trimmed.contains('-->') && trimmed.contains('<v ')) {
+    if (trimmed.startsWith('WEBVTT') ||
+        trimmed.contains('-->') && trimmed.contains('<v ')) {
       return VttParser.parse(content);
-    } else if (trimmed.contains('[Script Info]') || trimmed.contains('[Events]') || trimmed.contains('Dialogue:')) {
+    } else if (trimmed.contains('[Script Info]') ||
+        trimmed.contains('[Events]') ||
+        trimmed.contains('Dialogue:')) {
       return AssParser.parse(content);
     }
 

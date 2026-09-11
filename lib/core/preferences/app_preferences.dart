@@ -1,6 +1,8 @@
 import 'dart:ui';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import '../subtitles/models/subtitle_style.dart';
 
 /// Manages persistent user preferences using SharedPreferences
@@ -49,7 +51,10 @@ class AppPreferences {
     await _prefs.setDouble(_keySubOutlineWidth, style.outlineWidth);
     await _prefs.setDouble(_keySubGlowRadius, style.glowRadius);
     await _prefs.setBool(_keySubShowBgBox, style.showBackgroundBox);
-    await _prefs.setDouble(_keySubVerticalPos, style.verticalPositionPercentage);
+    await _prefs.setDouble(
+      _keySubVerticalPos,
+      style.verticalPositionPercentage,
+    );
   }
 
   // ─── Player ───
@@ -78,8 +83,11 @@ class AppPreferences {
     return _prefs.getInt('sync_${videoHash}_$subHash');
   }
 
-  Future<void> setCachedSubOffset(String videoHash, String subHash, int offsetMs) =>
-      _prefs.setInt('sync_${videoHash}_$subHash', offsetMs);
+  Future<void> setCachedSubOffset(
+    String videoHash,
+    String subHash,
+    int offsetMs,
+  ) => _prefs.setInt('sync_${videoHash}_$subHash', offsetMs);
 
   // ─── App Settings ───
 

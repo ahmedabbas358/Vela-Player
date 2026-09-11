@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+
 import '../../../core/constants/app_colors.dart';
 import '../../../core/subtitles/models/subtitle_style.dart';
 import '../../../core/subtitles/subtitle_manager.dart';
@@ -18,7 +19,8 @@ class SubtitleStudioSheet extends ConsumerStatefulWidget {
   }
 
   @override
-  ConsumerState<SubtitleStudioSheet> createState() => _SubtitleStudioSheetState();
+  ConsumerState<SubtitleStudioSheet> createState() =>
+      _SubtitleStudioSheetState();
 }
 
 class _SubtitleStudioSheetState extends ConsumerState<SubtitleStudioSheet>
@@ -139,9 +141,15 @@ class _SubtitleStudioSheetState extends ConsumerState<SubtitleStudioSheet>
             labelColor: AppColors.primaryLight,
             unselectedLabelColor: AppColors.textMuted,
             tabs: const [
-              Tab(text: 'الأنماط الجاهزة', icon: Icon(Icons.auto_awesome, size: 18)),
+              Tab(
+                text: 'الأنماط الجاهزة',
+                icon: Icon(Icons.auto_awesome, size: 18),
+              ),
               Tab(text: 'الخط والحجم', icon: Icon(Icons.text_fields, size: 18)),
-              Tab(text: 'الألوان والحدود', icon: Icon(Icons.color_lens_outlined, size: 18)),
+              Tab(
+                text: 'الألوان والحدود',
+                icon: Icon(Icons.color_lens_outlined, size: 18),
+              ),
               Tab(text: 'الموضع والخلفية', icon: Icon(Icons.tune, size: 18)),
             ],
           ),
@@ -288,11 +296,31 @@ class _SubtitleStudioSheetState extends ConsumerState<SubtitleStudioSheet>
 
   Widget _buildPresetsTab() {
     final presets = [
-      {'name': 'أبيض كلاسيكي', 'style': SubtitleStyle.classicWhite, 'icon': Icons.movie},
-      {'name': 'أنمي ذهبي', 'style': SubtitleStyle.animeYellow, 'icon': Icons.star},
-      {'name': 'سايبر نيون', 'style': SubtitleStyle.cyberNeon, 'icon': Icons.bolt},
-      {'name': 'نتفلكس مظلل', 'style': SubtitleStyle.netflixBoxed, 'icon': Icons.tv},
-      {'name': 'زمردي ناعم', 'style': SubtitleStyle.emeraldGlow, 'icon': Icons.diamond},
+      {
+        'name': 'أبيض كلاسيكي',
+        'style': SubtitleStyle.classicWhite,
+        'icon': Icons.movie,
+      },
+      {
+        'name': 'أنمي ذهبي',
+        'style': SubtitleStyle.animeYellow,
+        'icon': Icons.star,
+      },
+      {
+        'name': 'سايبر نيون',
+        'style': SubtitleStyle.cyberNeon,
+        'icon': Icons.bolt,
+      },
+      {
+        'name': 'نتفلكس مظلل',
+        'style': SubtitleStyle.netflixBoxed,
+        'icon': Icons.tv,
+      },
+      {
+        'name': 'زمردي ناعم',
+        'style': SubtitleStyle.emeraldGlow,
+        'icon': Icons.diamond,
+      },
     ];
 
     return ListView.builder(
@@ -307,19 +335,26 @@ class _SubtitleStudioSheetState extends ConsumerState<SubtitleStudioSheet>
         return Card(
           color: AppColors.surfaceVariant,
           margin: const EdgeInsets.only(bottom: 10),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
           child: ListTile(
             leading: CircleAvatar(
               backgroundColor: style.textColor.withValues(alpha: 0.2),
               child: Icon(icon, color: style.textColor, size: 20),
             ),
-            title: Text(name, style: const TextStyle(fontWeight: FontWeight.w600)),
+            title: Text(
+              name,
+              style: const TextStyle(fontWeight: FontWeight.w600),
+            ),
             subtitle: Text('${style.fontFamily} • ${style.fontSize.toInt()}px'),
             trailing: ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primary,
                 foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
               ),
               onPressed: () => _updateStyle(style),
               child: const Text('تطبيق'),
@@ -351,7 +386,9 @@ class _SubtitleStudioSheetState extends ConsumerState<SubtitleStudioSheet>
                 fontWeight: FontWeight.w600,
               ),
               onSelected: (selected) {
-                if (selected) _updateStyle(_currentStyle.copyWith(fontFamily: font));
+                if (selected) {
+                  _updateStyle(_currentStyle.copyWith(fontFamily: font));
+                }
               },
             );
           }).toList(),
@@ -360,8 +397,14 @@ class _SubtitleStudioSheetState extends ConsumerState<SubtitleStudioSheet>
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text('حجم الخط:', style: TextStyle(fontWeight: FontWeight.bold)),
-            Text('${_currentStyle.fontSize.toInt()} px', style: const TextStyle(color: AppColors.primaryLight)),
+            const Text(
+              'حجم الخط:',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            Text(
+              '${_currentStyle.fontSize.toInt()} px',
+              style: const TextStyle(color: AppColors.primaryLight),
+            ),
           ],
         ),
         Slider(
@@ -370,7 +413,8 @@ class _SubtitleStudioSheetState extends ConsumerState<SubtitleStudioSheet>
           max: 40.0,
           activeColor: AppColors.primary,
           inactiveColor: Colors.white24,
-          onChanged: (val) => _updateStyle(_currentStyle.copyWith(fontSize: val)),
+          onChanged: (val) =>
+              _updateStyle(_currentStyle.copyWith(fontSize: val)),
         ),
       ],
     );
@@ -380,17 +424,24 @@ class _SubtitleStudioSheetState extends ConsumerState<SubtitleStudioSheet>
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
-        const Text('لون النص الأساسي:', style: TextStyle(fontWeight: FontWeight.bold)),
+        const Text(
+          'لون النص الأساسي:',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         const SizedBox(height: 10),
         _buildColorPickerRow(
           selectedColor: _currentStyle.textColor,
-          onColorSelected: (col) => _updateStyle(_currentStyle.copyWith(textColor: col)),
+          onColorSelected: (col) =>
+              _updateStyle(_currentStyle.copyWith(textColor: col)),
         ),
         const Divider(height: 30, color: Colors.white12),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text('سماكة الحد الخارجي (Stroke):', style: TextStyle(fontWeight: FontWeight.bold)),
+            const Text(
+              'سماكة الحد الخارجي (Stroke):',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
             Text('${_currentStyle.outlineWidth.toStringAsFixed(1)} px'),
           ],
         ),
@@ -400,14 +451,19 @@ class _SubtitleStudioSheetState extends ConsumerState<SubtitleStudioSheet>
           max: 6.0,
           activeColor: AppColors.primary,
           inactiveColor: Colors.white24,
-          onChanged: (val) => _updateStyle(_currentStyle.copyWith(outlineWidth: val)),
+          onChanged: (val) =>
+              _updateStyle(_currentStyle.copyWith(outlineWidth: val)),
         ),
         const SizedBox(height: 8),
-        const Text('لون الحد الخارجي:', style: TextStyle(fontWeight: FontWeight.bold)),
+        const Text(
+          'لون الحد الخارجي:',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         const SizedBox(height: 10),
         _buildColorPickerRow(
           selectedColor: _currentStyle.outlineColor,
-          onColorSelected: (col) => _updateStyle(_currentStyle.copyWith(outlineColor: col)),
+          onColorSelected: (col) =>
+              _updateStyle(_currentStyle.copyWith(outlineColor: col)),
         ),
       ],
     );
@@ -420,8 +476,13 @@ class _SubtitleStudioSheetState extends ConsumerState<SubtitleStudioSheet>
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text('الموضع الرأسي للترجمة:', style: TextStyle(fontWeight: FontWeight.bold)),
-            Text('${(_currentStyle.verticalPositionPercentage * 100).toInt()}% من الشاشة'),
+            const Text(
+              'الموضع الرأسي للترجمة:',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            Text(
+              '${(_currentStyle.verticalPositionPercentage * 100).toInt()}% من الشاشة',
+            ),
           ],
         ),
         Slider(
@@ -430,19 +491,25 @@ class _SubtitleStudioSheetState extends ConsumerState<SubtitleStudioSheet>
           max: 0.95,
           activeColor: AppColors.primary,
           inactiveColor: Colors.white24,
-          onChanged: (val) => _updateStyle(_currentStyle.copyWith(
-            verticalPositionPercentage: val,
-            customOffset: null, // Clear custom drag offset on slider adjust
-          )),
+          onChanged: (val) => _updateStyle(
+            _currentStyle.copyWith(
+              verticalPositionPercentage: val,
+              customOffset: null, // Clear custom drag offset on slider adjust
+            ),
+          ),
         ),
         const Divider(height: 30, color: Colors.white12),
         SwitchListTile(
           contentPadding: EdgeInsets.zero,
-          title: const Text('إظهار صندوق خلفية شبه شفاف', style: TextStyle(fontWeight: FontWeight.bold)),
+          title: const Text(
+            'إظهار صندوق خلفية شبه شفاف',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
           subtitle: const Text('يسهل القراءة في المشاهد شديدة السطوع'),
           value: _currentStyle.showBackgroundBox,
           activeThumbColor: AppColors.primary,
-          onChanged: (val) => _updateStyle(_currentStyle.copyWith(showBackgroundBox: val)),
+          onChanged: (val) =>
+              _updateStyle(_currentStyle.copyWith(showBackgroundBox: val)),
         ),
       ],
     );
@@ -475,7 +542,9 @@ class _SubtitleStudioSheetState extends ConsumerState<SubtitleStudioSheet>
                   ? Icon(
                       Icons.check,
                       size: 20,
-                      color: col.computeLuminance() > 0.5 ? Colors.black : Colors.white,
+                      color: col.computeLuminance() > 0.5
+                          ? Colors.black
+                          : Colors.white,
                     )
                   : null,
             ),

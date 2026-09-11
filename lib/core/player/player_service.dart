@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
@@ -77,51 +78,67 @@ class PlayerService extends ChangeNotifier {
   }
 
   void _initListeners() {
-    _subscriptions.add(player.stream.playing.listen((playing) {
-      _state = _state.copyWith(isPlaying: playing);
-      notifyListeners();
-    }));
+    _subscriptions.add(
+      player.stream.playing.listen((playing) {
+        _state = _state.copyWith(isPlaying: playing);
+        notifyListeners();
+      }),
+    );
 
-    _subscriptions.add(player.stream.buffering.listen((buffering) {
-      _state = _state.copyWith(isBuffering: buffering);
-      notifyListeners();
-    }));
+    _subscriptions.add(
+      player.stream.buffering.listen((buffering) {
+        _state = _state.copyWith(isBuffering: buffering);
+        notifyListeners();
+      }),
+    );
 
-    _subscriptions.add(player.stream.position.listen((pos) {
-      _state = _state.copyWith(position: pos);
-      notifyListeners();
-    }));
+    _subscriptions.add(
+      player.stream.position.listen((pos) {
+        _state = _state.copyWith(position: pos);
+        notifyListeners();
+      }),
+    );
 
-    _subscriptions.add(player.stream.duration.listen((dur) {
-      _state = _state.copyWith(duration: dur);
-      notifyListeners();
-    }));
+    _subscriptions.add(
+      player.stream.duration.listen((dur) {
+        _state = _state.copyWith(duration: dur);
+        notifyListeners();
+      }),
+    );
 
-    _subscriptions.add(player.stream.volume.listen((vol) {
-      _state = _state.copyWith(volume: vol);
-      notifyListeners();
-    }));
+    _subscriptions.add(
+      player.stream.volume.listen((vol) {
+        _state = _state.copyWith(volume: vol);
+        notifyListeners();
+      }),
+    );
 
-    _subscriptions.add(player.stream.rate.listen((rate) {
-      _state = _state.copyWith(playbackRate: rate);
-      notifyListeners();
-    }));
+    _subscriptions.add(
+      player.stream.rate.listen((rate) {
+        _state = _state.copyWith(playbackRate: rate);
+        notifyListeners();
+      }),
+    );
 
-    _subscriptions.add(player.stream.tracks.listen((tracks) {
-      _state = _state.copyWith(
-        audioTracks: tracks.audio,
-        internalSubtitleTracks: tracks.subtitle,
-      );
-      notifyListeners();
-    }));
+    _subscriptions.add(
+      player.stream.tracks.listen((tracks) {
+        _state = _state.copyWith(
+          audioTracks: tracks.audio,
+          internalSubtitleTracks: tracks.subtitle,
+        );
+        notifyListeners();
+      }),
+    );
 
-    _subscriptions.add(player.stream.track.listen((track) {
-      _state = _state.copyWith(
-        selectedAudioTrack: track.audio,
-        selectedSubtitleTrack: track.subtitle,
-      );
-      notifyListeners();
-    }));
+    _subscriptions.add(
+      player.stream.track.listen((track) {
+        _state = _state.copyWith(
+          selectedAudioTrack: track.audio,
+          selectedSubtitleTrack: track.subtitle,
+        );
+        notifyListeners();
+      }),
+    );
   }
 
   Future<void> openFile(String path, {String? title}) async {

@@ -55,10 +55,12 @@ class VelaButton extends StatelessWidget {
                     const SizedBox(
                       width: 18,
                       height: 18,
-                      child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                      child: CircularProgressIndicator(
+                          color: Colors.white, strokeWidth: 2),
                     )
                   else ...[
-                    const Icon(Icons.auto_awesome_rounded, color: Colors.white, size: 20),
+                    const Icon(Icons.auto_awesome_rounded,
+                        color: Colors.white, size: 20),
                     const SizedBox(width: 8),
                   ],
                   Text(
@@ -108,13 +110,16 @@ class VelaButton extends StatelessWidget {
             SizedBox(
               width: 16,
               height: 16,
-              child: CircularProgressIndicator(color: textColor, strokeWidth: 2),
+              child:
+                  CircularProgressIndicator(color: textColor, strokeWidth: 2),
             )
           else if (icon != null) ...[
             Icon(icon, size: 18, color: textColor),
             const SizedBox(width: 6),
           ],
-          Text(label, style: AppTypography.bodyLarge.copyWith(color: textColor, fontWeight: FontWeight.w600)),
+          Text(label,
+              style: AppTypography.bodyLarge
+                  .copyWith(color: textColor, fontWeight: FontWeight.w600)),
         ],
       ),
     );

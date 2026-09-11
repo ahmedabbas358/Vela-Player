@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/subtitles/subtitle_manager.dart';
 
@@ -29,7 +30,11 @@ class SubtitleQuickOffsetDialog extends ConsumerWidget {
               color: AppColors.primary.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(10),
             ),
-            child: const Icon(Icons.sync, color: AppColors.primaryLight, size: 22),
+            child: const Icon(
+              Icons.sync,
+              color: AppColors.primaryLight,
+              size: 22,
+            ),
           ),
           const SizedBox(width: 12),
           const Text(
@@ -82,13 +87,18 @@ class SubtitleQuickOffsetDialog extends ConsumerWidget {
           onPressed: () {
             ref.read(subtitleProvider.notifier).resetOffset();
           },
-          child: const Text('إعادة تعيين (0ms)', style: TextStyle(color: Colors.amber)),
+          child: const Text(
+            'إعادة تعيين (0ms)',
+            style: TextStyle(color: Colors.amber),
+          ),
         ),
         ElevatedButton(
           style: ElevatedButton.styleFrom(
             backgroundColor: AppColors.primary,
             foregroundColor: Colors.white,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
           ),
           onPressed: () => Navigator.of(context).pop(),
           child: const Text('تم'),
@@ -106,7 +116,9 @@ class SubtitleQuickOffsetDialog extends ConsumerWidget {
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       ),
       onPressed: () {
-        ref.read(subtitleProvider.notifier).adjustOffset(Duration(milliseconds: deltaMs));
+        ref
+            .read(subtitleProvider.notifier)
+            .adjustOffset(Duration(milliseconds: deltaMs));
       },
       child: Text(label, style: const TextStyle(fontSize: 12)),
     );

@@ -51,7 +51,8 @@ class MediaCard extends StatelessWidget {
                       width: double.infinity,
                       decoration: const BoxDecoration(
                         color: Color(0xFF1E2230),
-                        borderRadius: BorderRadius.vertical(top: Radius.circular(AppSpacing.radiusMd)),
+                        borderRadius: BorderRadius.vertical(
+                            top: Radius.circular(AppSpacing.radiusMd)),
                       ),
                       child: thumbnailWidget ??
                           Center(
@@ -73,11 +74,14 @@ class MediaCard extends StatelessWidget {
                           children: technicalTags.map((tag) {
                             return Container(
                               margin: const EdgeInsets.only(left: 4),
-                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 6, vertical: 2),
                               decoration: BoxDecoration(
                                 color: Colors.black.withAlpha(180),
                                 borderRadius: BorderRadius.circular(4),
-                                border: Border.all(color: Colors.white.withAlpha(30), width: 0.5),
+                                border: Border.all(
+                                    color: Colors.white.withAlpha(30),
+                                    width: 0.5),
                               ),
                               child: Text(
                                 tag,
@@ -101,7 +105,8 @@ class MediaCard extends StatelessWidget {
                         child: LinearProgressIndicator(
                           value: progress.clamp(0.0, 1.0),
                           backgroundColor: Colors.black.withAlpha(120),
-                          valueColor: const AlwaysStoppedAnimation<Color>(AppColors.primaryAccent),
+                          valueColor: const AlwaysStoppedAnimation<Color>(
+                              AppColors.primaryAccent),
                           minHeight: 3,
                         ),
                       ),
@@ -132,7 +137,8 @@ class MediaCard extends StatelessWidget {
                                 subtitle!,
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: AppTypography.bodyMedium.copyWith(fontSize: 12),
+                                style: AppTypography.bodyMedium
+                                    .copyWith(fontSize: 12),
                               ),
                             ),
                           if (durationText != null)
