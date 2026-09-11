@@ -74,26 +74,22 @@ jobs:
           KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
         run: |
           if [ -n "$KEYSTORE_BASE64" ]; then
-            echo "Using production keystore from GitHub Secrets..."
+            echo "Decoding repository secret keystore..."
             echo "$KEYSTORE_BASE64" | base64 --decode > android/app/upload-keystore.jks
-            cat <<EOF > android/key.properties
-            storePassword=$KEYSTORE_PASSWORD
-            keyPassword=$KEY_PASSWORD
-            keyAlias=$KEY_ALIAS
-            storeFile=upload-keystore.jks
-          EOF
+            echo "storePassword=$KEYSTORE_PASSWORD" > android/key.properties
+            echo "keyPassword=$KEY_PASSWORD" >> android/key.properties
+            echo "keyAlias=$KEY_ALIAS" >> android/key.properties
+            echo "storeFile=upload-keystore.jks" >> android/key.properties
           else
             echo "Generating official reproducible release keystore for seamless updates..."
             keytool -genkey -v -keystore android/app/upload-keystore.jks \
               -storepass "VelaPlayer2026SecureRelease!" -alias "vela_release_key" \
               -keypass "VelaPlayer2026SecureRelease!" -keyalg RSA -keysize 2048 -validity 10000 \
               -dname "CN=Vela Player, OU=Mobile Team, O=Vela Player, L=San Francisco, ST=California, C=US"
-            cat <<EOF > android/key.properties
-            storePassword=VelaPlayer2026SecureRelease!
-            keyPassword=VelaPlayer2026SecureRelease!
-            keyAlias=vela_release_key
-            storeFile=upload-keystore.jks
-          EOF
+            echo "storePassword=VelaPlayer2026SecureRelease!" > android/key.properties
+            echo "keyPassword=VelaPlayer2026SecureRelease!" >> android/key.properties
+            echo "keyAlias=vela_release_key" >> android/key.properties
+            echo "storeFile=upload-keystore.jks" >> android/key.properties
           fi
           cp android/key.properties android/app/key.properties
 
@@ -105,7 +101,11 @@ jobs:
             VERSION="v${{ github.event.inputs.version_name || '1.0.0' }}"
           fi
           CLEAN_VERSION="${VERSION#v}"
-          BUILD_NUMBER=$(( github.run_number + 100 ))
+          RUN_NUM="${{ github.run_number }}"
+          if [ -z "$RUN_NUM" ]; then
+            RUN_NUM=1
+          fi
+          BUILD_NUMBER=$(( RUN_NUM + 100 ))
           echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
           echo "CLEAN_VERSION=$CLEAN_VERSION" >> $GITHUB_OUTPUT
           echo "BUILD_NUMBER=$BUILD_NUMBER" >> $GITHUB_OUTPUT
@@ -193,7 +193,11 @@ jobs:
             VERSION="v${{ github.event.inputs.version_name || '1.0.0' }}"
           fi
           CLEAN_VERSION="${VERSION#v}"
-          BUILD_NUMBER=$(( github.run_number + 100 ))
+          RUN_NUM="${{ github.run_number }}"
+          if [ -z "$RUN_NUM" ]; then
+            RUN_NUM=1
+          fi
+          BUILD_NUMBER=$(( RUN_NUM + 100 ))
           echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
           echo "CLEAN_VERSION=$CLEAN_VERSION" >> $GITHUB_OUTPUT
           echo "BUILD_NUMBER=$BUILD_NUMBER" >> $GITHUB_OUTPUT
