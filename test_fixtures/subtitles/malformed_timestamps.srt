@@ -1,0 +1,19 @@
+1
+1:02:03,45 --> 1:02:06,8
+Vela Player: Resilient timestamp parsing test.
+
+2
+00:00:05,000 --> 00:00:02,000
+Invalid backwards duration cue (should be flagged by health engine).
+
+3
+00:00:10.500 --> 00:00:15.800
+Dots instead of commas for milliseconds.
+
+4
+00:00:12,000 --> 00:00:18,000
+Overlapping cue with cue 3.
+
+5
+00:00:20,000 --> 00:00:20,040
+Micro-flash subtitle under 50ms!

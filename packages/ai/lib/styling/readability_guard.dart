@@ -16,7 +16,9 @@ class ReadabilityGuard {
 
     double sRgbToLinear(int channelValue) {
       final v = channelValue / 255.0;
-      return v <= 0.04045 ? v / 12.92 : math.pow((v + 0.055) / 1.055, 2.4).toDouble();
+      return v <= 0.04045
+          ? v / 12.92
+          : math.pow((v + 0.055) / 1.055, 2.4).toDouble();
     }
 
     final linearR = sRgbToLinear(r);

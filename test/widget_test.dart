@@ -4,13 +4,13 @@ import 'package:vela_player/features/home/presentation/home_screen.dart';
 import 'package:flutter/material.dart';
 
 void main() {
-  testWidgets('LumaSub HomeScreen smoke test', (WidgetTester tester) async {
+  testWidgets('Vela Player HomeScreen smoke test', (WidgetTester tester) async {
     await tester.pumpWidget(
       const ProviderScope(child: MaterialApp(home: HomeScreen())),
     );
 
     // Verify presence of title and key action cards
-    expect(find.text('LumaSub'), findsOneWidget);
+    expect(find.text('Vela Player'), findsOneWidget);
     expect(find.text('فتح فيديو'), findsOneWidget);
     expect(find.text('استوديو التنسيق'), findsOneWidget);
   });

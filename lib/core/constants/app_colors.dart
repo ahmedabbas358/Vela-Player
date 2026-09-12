@@ -16,10 +16,14 @@ class AppColors {
   static const Color accentNeon = Color(0xFF10B981); // Emerald
   static const Color amberHighlight = Color(0xFFF59E0B); // Anime Gold
 
-  // Text colors
   static const Color textPrimary = Color(0xFFF8FAFC);
   static const Color textSecondary = Color(0xFF94A3B8);
   static const Color textMuted = Color(0xFF64748B);
+
+  // Functional status colors
+  static const Color success = Color(0xFF10B981); // Emerald
+  static const Color error = Color(0xFFEF4444); // Red
+  static const Color warning = Color(0xFFF59E0B); // Amber
 
   // Glassmorphic overlays
   static const Color glassBackground = Color(0xB3161A22);

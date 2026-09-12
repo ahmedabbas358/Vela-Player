@@ -73,9 +73,9 @@ class _SubtitleQuickOffsetDialogState
     if (mounted) {
       setState(() => _isAutoSyncing = false);
       if (syncResult.optimalOffsetMs != 0) {
-        ref.read(subtitleProvider.notifier).adjustOffset(
-              Duration(milliseconds: syncResult.optimalOffsetMs),
-            );
+        ref
+            .read(subtitleProvider.notifier)
+            .adjustOffset(Duration(milliseconds: syncResult.optimalOffsetMs));
       }
 
       ScaffoldMessenger.of(context).showSnackBar(

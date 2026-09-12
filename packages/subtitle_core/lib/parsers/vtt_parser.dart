@@ -1,16 +1,22 @@
 import '../models/unified_subtitle_cue.dart';
 
 /// High-performance parser for WebVTT (.vtt) subtitle files.
+/// Includes support for UTF-8 BOM, voice tags, and flexible timestamp formats.
 class VttParser {
   static final RegExp _timingRegex = RegExp(
-    r'(?:(\d{2}):)?(\d{2}):(\d{2})\.(\d{3})\s*-->\s*(?:(\d{2}):)?(\d{2}):(\d{2})\.(\d{3})',
+    r'(?:(\d{1,2}):)?(\d{1,2}):(\d{1,2})\.(\d{1,4})\s*-->\s*(?:(\d{1,2}):)?(\d{1,2}):(\d{1,2})\.(\d{1,4})',
   );
 
   /// Parses raw WebVTT content string into a list of [UnifiedSubtitleCue].
   static List<UnifiedSubtitleCue> parse(String content) {
     if (content.isEmpty) return [];
 
-    final normalized = content.replaceAll('\r\n', '\n').replaceAll('\r', '\n');
+    var cleaned = content;
+    if (cleaned.startsWith('\uFEFF')) {
+      cleaned = cleaned.substring(1);
+    }
+
+    final normalized = cleaned.replaceAll('\r\n', '\n').replaceAll('\r', '\n');
     final blocks = normalized.split(RegExp(r'\n{2,}'));
     final List<UnifiedSubtitleCue> cues = [];
 
@@ -42,12 +48,12 @@ class VttParser {
       final startH = match.group(1) != null ? int.parse(match.group(1)!) : 0;
       final startM = int.parse(match.group(2)!);
       final startS = int.parse(match.group(3)!);
-      final startMs = int.parse(match.group(4)!);
+      final startMs = _normalizeMillis(match.group(4)!);
 
       final endH = match.group(5) != null ? int.parse(match.group(5)!) : 0;
       final endM = int.parse(match.group(6)!);
       final endS = int.parse(match.group(7)!);
-      final endMs = int.parse(match.group(8)!);
+      final endMs = _normalizeMillis(match.group(8)!);
 
       final startTime =
           (startH * 3600000) + (startM * 60000) + (startS * 1000) + startMs;
@@ -86,5 +92,12 @@ class VttParser {
     }
 
     return cues;
+  }
+
+  static int _normalizeMillis(String millisStr) {
+    if (millisStr.length >= 3) {
+      return int.parse(millisStr.substring(0, 3));
+    }
+    return int.parse(millisStr.padRight(3, '0'));
   }
 }

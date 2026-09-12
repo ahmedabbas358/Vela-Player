@@ -338,9 +338,7 @@ class PlayerService extends ChangeNotifier {
   /// Set Point A for A-B Repeat loop.
   void setAbRepeatPointA() {
     _state = _state.copyWith(
-      abRepeat: _state.abRepeat.copyWith(
-        pointA: () => _state.position,
-      ),
+      abRepeat: _state.abRepeat.copyWith(pointA: () => _state.position),
     );
     notifyListeners();
   }
@@ -361,9 +359,7 @@ class PlayerService extends ChangeNotifier {
 
   /// Clear A-B Repeat loop.
   void clearAbRepeat() {
-    _state = _state.copyWith(
-      abRepeat: const AbRepeatState(),
-    );
+    _state = _state.copyWith(abRepeat: const AbRepeatState());
     notifyListeners();
   }
 

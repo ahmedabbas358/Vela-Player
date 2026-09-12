@@ -89,7 +89,6 @@ class LabColor {
 
     return 0xFF000000 | (redInt << 16) | (greenInt << 8) | blueInt;
   }
-
 }
 
 /// Advanced visual color extraction engine for character hair and eye palettes.

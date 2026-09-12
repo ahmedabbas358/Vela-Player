@@ -100,10 +100,14 @@ class SubtitleHealthEvaluator {
   static List<UnifiedSubtitleCue> autoRepair(List<UnifiedSubtitleCue> cues) {
     if (cues.isEmpty) return [];
 
+    // Sort cues chronologically so overlap adjustments are strictly ordered
+    final sorted = List<UnifiedSubtitleCue>.from(cues)
+      ..sort((a, b) => a.startMs.compareTo(b.startMs));
+
     final repaired = <UnifiedSubtitleCue>[];
 
-    for (int i = 0; i < cues.length; i++) {
-      var cue = cues[i];
+    for (int i = 0; i < sorted.length; i++) {
+      var cue = sorted[i];
 
       // Fix negative or zero durations
       if (cue.endMs <= cue.startMs) {
@@ -121,9 +125,9 @@ class SubtitleHealthEvaluator {
         final prevIndex = repaired.length - 1;
         final prev = repaired[prevIndex];
         if (cue.startMs < prev.endMs) {
-          // Adjust previous cue to end 25ms before current starts
-          final adjustedPrevEnd =
-              (cue.startMs - 25).clamp(prev.startMs + 300, cue.startMs);
+          final targetEnd = cue.startMs - 25;
+          final minEnd = prev.startMs + 100;
+          final adjustedPrevEnd = targetEnd >= minEnd ? targetEnd : minEnd;
           repaired[prevIndex] = prev.copyWith(endMs: adjustedPrevEnd);
         }
       }

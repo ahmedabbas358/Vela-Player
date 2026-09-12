@@ -4,7 +4,9 @@ import 'package:test/test.dart';
 
 void main() {
   group('ReadabilityGuard Tests', () {
-    test('enforces WCAG AAA compliant contrast on bright yellow anime hair color', () {
+    test(
+        'enforces WCAG AAA compliant contrast on bright yellow anime hair color',
+        () {
       const brightYellowArgb = 0xFFFFEB3B; // Naruto hair color
       final style = ReadabilityGuard.enforceReadability(
         candidateColorArgb: brightYellowArgb,
@@ -52,7 +54,8 @@ void main() {
   });
 
   group('ContextAwareTranslationEngine Tests', () {
-    test('preserves timestamps, HTML/ASS tags, and protected glossary terms', () async {
+    test('preserves timestamps, HTML/ASS tags, and protected glossary terms',
+        () async {
       const engine = ContextAwareTranslationEngine(batchSize: 2);
 
       final originalCues = [
@@ -101,7 +104,93 @@ void main() {
       expect(translated[1].text, contains('ناروتو'));
 
       // Original text is preserved in originalText field
-      expect(translated[0].originalText, equals('Hello <i>Rasengan</i> technique!'));
+      expect(translated[0].originalText,
+          equals('Hello <i>Rasengan</i> technique!'));
+    });
+  });
+
+  group('CharacterStylingStudio Tests', () {
+    test('stabilizes frame colors and respects manual user locking', () {
+      final studio = CharacterStylingStudio();
+
+      const characterId = 'luffy';
+      const characterName = 'Luffy';
+
+      // Simulate frame with red shirt and black hair
+      final framePixels = [
+        0xFF101010, // Hair
+        0xFF101010,
+        0xFFD32F2F, // Red
+      ];
+
+      final palette1 = studio.processCharacterFrame(
+        characterId: characterId,
+        characterName: characterName,
+        characterRegionArgbPixels: framePixels,
+        videoBackgroundArgbPixels: [0xFF000000],
+      );
+
+      expect(palette1.name, equals('Luffy'));
+      expect(studio.isLocked(characterId), isFalse);
+
+      // User manually locks custom gold color
+      const customLockedProfile = CharacterProfile(
+        characterId: characterId,
+        name: characterName,
+        hairColorHex: '#FFD700',
+        eyeColorHex: '#000000',
+        assignedSubtitleColorHex: '#FFD700',
+        confidence: 1.0,
+      );
+
+      studio.lockProfile(customLockedProfile);
+      expect(studio.isLocked(characterId), isTrue);
+
+      // New frame should now return the locked palette
+      final palette2 = studio.processCharacterFrame(
+        characterId: characterId,
+        characterName: characterName,
+        characterRegionArgbPixels: framePixels,
+        videoBackgroundArgbPixels: [0xFF000000],
+      );
+
+      expect(palette2.hairColorHex, equals('#FFD700'));
+    });
+  });
+
+  group('BurnedInSubtitleOcrEngine Tests', () {
+    test('clusters sequential matching OCR detections into single subtitle cue',
+        () {
+      final detections = [
+        const OcrFrameDetection(
+          timestampMs: 1000,
+          detectedText: 'Welcome to the championship',
+          confidence: 0.95,
+        ),
+        const OcrFrameDetection(
+          timestampMs: 1500,
+          detectedText: 'Welcome to the championship',
+          confidence: 0.98,
+        ),
+        const OcrFrameDetection(
+          timestampMs: 2000,
+          detectedText: 'Welcome to the championship',
+          confidence: 0.92,
+        ),
+        const OcrFrameDetection(
+          timestampMs: 4000,
+          detectedText: 'The match has begun!',
+          confidence: 0.90,
+        ),
+      ];
+
+      final cues = BurnedInSubtitleOcrEngine.clusterDetections(detections);
+      expect(cues.length, equals(2));
+      expect(cues[0].text, equals('Welcome to the championship'));
+      expect(cues[0].startMs, equals(1000));
+      expect(cues[0].endMs, equals(2500)); // 2000 + 500
+      expect(cues[1].text, equals('The match has begun!'));
+      expect(cues[1].startMs, equals(4000));
     });
   });
 }

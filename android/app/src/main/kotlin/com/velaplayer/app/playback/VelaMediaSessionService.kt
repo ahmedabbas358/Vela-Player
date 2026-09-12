@@ -13,35 +13,47 @@ import androidx.media3.session.MediaSessionService
  * lock screen media controls, and Bluetooth headset integration with foregroundServiceType="mediaPlayback".
  */
 class VelaMediaSessionService : MediaSessionService() {
-    private var mediaSession: MediaSession? = null
+
+    companion object {
+        var activePlayer: ExoPlayer? = null
+        var activeSession: MediaSession? = null
+    }
+
+    private var fallbackSession: MediaSession? = null
 
     @OptIn(UnstableApi::class)
     override fun onCreate() {
         super.onCreate()
-        val player = ExoPlayer.Builder(this)
-            .setHandleAudioBecomingNoisy(true)
-            .build()
-
-        mediaSession = MediaSession.Builder(this, player)
-            .build()
+        if (activeSession == null) {
+            val player = activePlayer ?: ExoPlayer.Builder(this)
+                .setHandleAudioBecomingNoisy(true)
+                .build()
+            activePlayer = player
+            fallbackSession = MediaSession.Builder(this, player).build()
+            activeSession = fallbackSession
+        }
     }
 
     override fun onGetSession(controllerInfo: MediaSession.ControllerInfo): MediaSession? {
-        return mediaSession
+        return activeSession ?: fallbackSession
     }
 
     override fun onTaskRemoved(rootIntent: Intent?) {
-        val player = mediaSession?.player
+        val player = (activeSession ?: fallbackSession)?.player
         if (player == null || !player.playWhenReady || player.mediaItemCount == 0) {
             stopSelf()
         }
     }
 
     override fun onDestroy() {
-        mediaSession?.run {
+        fallbackSession?.run {
             player.release()
             release()
-            mediaSession = null
+            fallbackSession = null
+        }
+        if (activeSession == fallbackSession) {
+            activeSession = null
+            activePlayer = null
         }
         super.onDestroy()
     }

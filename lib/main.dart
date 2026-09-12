@@ -5,23 +5,26 @@ import 'package:media_kit/media_kit.dart';
 
 import 'core/constants/app_colors.dart';
 import 'features/home/presentation/home_screen.dart';
-import 'features/library/presentation/media_library_screen.dart';
+import 'features/library/presentation/screens/netflix_style_library_screen.dart';
+import 'features/network/presentation/screens/network_hub_screen.dart';
+import 'features/settings/presentation/settings_screen.dart';
+import 'features/subtitles/presentation/subtitle_studio_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  // Initialize media_kit native backend (libmpv)
+  // Initialize media_kit native backend (libmpv fallback)
   MediaKit.ensureInitialized();
 
-  runApp(const ProviderScope(child: LumaSubApp()));
+  runApp(const ProviderScope(child: VelaPlayerApp()));
 }
 
-class LumaSubApp extends StatelessWidget {
-  const LumaSubApp({super.key});
+class VelaPlayerApp extends StatelessWidget {
+  const VelaPlayerApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'LumaSub - مشغل وسائط وترجمة ذكي',
+      title: 'Vela Player - مشغل وسائط وترجمة ذكية',
       debugShowCheckedModeBanner: false,
       themeMode: ThemeMode.dark,
       theme: ThemeData(
@@ -47,7 +50,7 @@ class LumaSubApp extends StatelessWidget {
   }
 }
 
-/// Main shell with bottom navigation between Home and Library
+/// Main shell with 5-destination bottom navigation (Section 15.2: Home | Library | Studio | Network | Settings)
 class MainShell extends StatefulWidget {
   const MainShell({super.key});
 
@@ -58,7 +61,13 @@ class MainShell extends StatefulWidget {
 class _MainShellState extends State<MainShell> {
   int _currentIndex = 0;
 
-  final List<Widget> _screens = const [HomeScreen(), MediaLibraryScreen()];
+  final List<Widget> _screens = const [
+    HomeScreen(),
+    NetflixStyleLibraryScreen(),
+    SubtitleStudioScreen(),
+    NetworkHubScreen(),
+    SettingsScreen(),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -85,12 +94,36 @@ class _MainShellState extends State<MainShell> {
               label: 'الرئيسية',
             ),
             NavigationDestination(
-              icon: Icon(Icons.video_library_outlined),
+              icon: Icon(Icons.movie_filter_outlined),
               selectedIcon: Icon(
-                Icons.video_library,
+                Icons.movie_filter_rounded,
                 color: AppColors.primaryLight,
               ),
-              label: 'المكتبة',
+              label: 'المكتبة الذكية',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.subtitles_outlined),
+              selectedIcon: Icon(
+                Icons.subtitles_rounded,
+                color: AppColors.primaryLight,
+              ),
+              label: 'استوديو الترجمة',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.hub_outlined),
+              selectedIcon: Icon(
+                Icons.hub_rounded,
+                color: AppColors.primaryLight,
+              ),
+              label: 'الشبكات',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.settings_outlined),
+              selectedIcon: Icon(
+                Icons.settings_rounded,
+                color: AppColors.primaryLight,
+              ),
+              label: 'الإعدادات',
             ),
           ],
         ),

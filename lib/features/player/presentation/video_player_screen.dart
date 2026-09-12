@@ -16,6 +16,7 @@ import 'widgets/audio_enhancement_sheet.dart';
 import 'widgets/diagnostic_hud_overlay.dart';
 import 'widgets/player_settings_sheet.dart';
 import 'widgets/subtitle_quick_offset_dialog.dart';
+import 'widgets/subtitle_timeline_scrubber_bar.dart';
 
 class VideoPlayerScreen extends ConsumerStatefulWidget {
   final String videoPath;
@@ -37,6 +38,7 @@ class _VideoPlayerScreenState extends ConsumerState<VideoPlayerScreen> {
   late final PlayerService _playerService;
   bool _showControls = true;
   bool _showDiagnosticHud = false;
+  bool _showSubtitleTimeline = false;
   Timer? _controlsTimer;
 
   // Gesture indicators
@@ -207,13 +209,13 @@ class _VideoPlayerScreenState extends ConsumerState<VideoPlayerScreen> {
                 width: pState.aspectMode == VideoAspectMode.ratio16x9
                     ? 1920
                     : (pState.aspectMode == VideoAspectMode.ratio21x9
-                        ? 2560
-                        : MediaQuery.of(context).size.width),
+                          ? 2560
+                          : MediaQuery.of(context).size.width),
                 height: pState.aspectMode == VideoAspectMode.ratio16x9
                     ? 1080
                     : (pState.aspectMode == VideoAspectMode.ratio21x9
-                        ? 1080
-                        : MediaQuery.of(context).size.height),
+                          ? 1080
+                          : MediaQuery.of(context).size.height),
                 child: Video(
                   controller: _playerService.controller,
                   controls: NoVideoControls,
@@ -251,11 +253,22 @@ class _VideoPlayerScreenState extends ConsumerState<VideoPlayerScreen> {
               playerService: _playerService,
               onClose: () => setState(() => _showDiagnosticHud = false),
             ),
+
+          // 8. Live Interactive Subtitle Timeline Scrubber Bar
+          if (_showSubtitleTimeline)
+            Positioned(
+              left: 16,
+              right: 16,
+              bottom: _showControls ? 96 : 24,
+              child: SubtitleTimelineScrubberBar(
+                onClose: () => setState(() => _showSubtitleTimeline = false),
+                onOpenAutoSync: () => SubtitleQuickOffsetDialog.show(context),
+              ),
+            ),
         ],
       ),
     );
   }
-
 
   Widget _buildGestureLayer(PlayerStateData pState) {
     return LayoutBuilder(
@@ -404,8 +417,8 @@ class _VideoPlayerScreenState extends ConsumerState<VideoPlayerScreen> {
                       _volumeIndicator! == 0
                           ? Icons.volume_off
                           : (_volumeIndicator! > 100
-                              ? Icons.offline_bolt_rounded
-                              : Icons.volume_up),
+                                ? Icons.offline_bolt_rounded
+                                : Icons.volume_up),
                       color: _volumeIndicator! > 100
                           ? AppColors.accent
                           : AppColors.primaryLight,
@@ -431,8 +444,11 @@ class _VideoPlayerScreenState extends ConsumerState<VideoPlayerScreen> {
                       ),
                   ],
                   if (_brightnessIndicator != null) ...[
-                    const Icon(Icons.brightness_6,
-                        color: Colors.amber, size: 40),
+                    const Icon(
+                      Icons.brightness_6,
+                      color: Colors.amber,
+                      size: 40,
+                    ),
                     const SizedBox(height: 8),
                     Text(
                       'السطوع: ${(_brightnessIndicator! * 100).toInt()}%',
@@ -619,6 +635,20 @@ class _VideoPlayerScreenState extends ConsumerState<VideoPlayerScreen> {
                 onPressed: () => SubtitleQuickOffsetDialog.show(context),
               ),
 
+              // Live Subtitle Timeline Scrubber Toggle
+              IconButton(
+                tooltip: 'شريط توقيت الترجمة الحي',
+                icon: Icon(
+                  Icons.linear_scale_rounded,
+                  color: _showSubtitleTimeline
+                      ? AppColors.primary
+                      : Colors.white70,
+                ),
+                onPressed: () => setState(
+                  () => _showSubtitleTimeline = !_showSubtitleTimeline,
+                ),
+              ),
+
               // Pick external subtitle
               IconButton(
                 tooltip: 'تحميل ملف ترجمة خارجي',
@@ -631,7 +661,9 @@ class _VideoPlayerScreenState extends ConsumerState<VideoPlayerScreen> {
                 tooltip: 'شاشة تشخيص المطورين (Stats for Nerds)',
                 icon: Icon(
                   Icons.terminal_rounded,
-                  color: _showDiagnosticHud ? Colors.greenAccent : Colors.white70,
+                  color: _showDiagnosticHud
+                      ? Colors.greenAccent
+                      : Colors.white70,
                 ),
                 onPressed: () =>
                     setState(() => _showDiagnosticHud = !_showDiagnosticHud),
@@ -742,13 +774,14 @@ class _VideoPlayerScreenState extends ConsumerState<VideoPlayerScreen> {
                           ),
                         ),
                         itemBuilder: (context) =>
-                            [0.5, 0.75, 1.0, 1.25, 1.5, 2.0, 3.0, 4.0]
-                                .map((rate) {
-                          return PopupMenuItem(
-                            value: rate,
-                            child: Text('${rate}x'),
-                          );
-                        }).toList(),
+                            [0.5, 0.75, 1.0, 1.25, 1.5, 2.0, 3.0, 4.0].map((
+                              rate,
+                            ) {
+                              return PopupMenuItem(
+                                value: rate,
+                                child: Text('${rate}x'),
+                              );
+                            }).toList(),
                       ),
 
                       if (pState.abRepeat.isActive)

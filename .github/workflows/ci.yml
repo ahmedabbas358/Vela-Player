@@ -12,9 +12,9 @@ concurrency:
 
 jobs:
   validate:
-    name: Lint, Test & Validate
+    name: Lint, Test, Fuzz & Build Validation
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 35
 
     steps:
       - name: Checkout Code
@@ -26,18 +26,25 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
           cache: true
 
-      - name: Verify Flutter & Dart
+      - name: Verify Environment Tooling
         run: |
           flutter --version
           dart --version
+          python --version
 
-      - name: Install Project Dependencies
+      - name: Install Project & Monorepo Dependencies
         run: |
           flutter pub get
           for dir in packages/*/; do
@@ -47,21 +54,46 @@ jobs:
             fi
           done
 
+      - name: Install Backend Dependencies
+        run: |
+          cd backend
+          pip install -e .
+          pip install pytest httpx
+
       - name: Check Code Formatting
         run: dart format --output=none --set-exit-if-changed .
 
       - name: Static Code Analysis
         run: flutter analyze --no-fatal-infos
 
-      - name: Run Unit & Widget Tests
+      - name: Run Subtitle Core Unit & Fuzz Tests
         run: |
+          cd packages/subtitle_core
+          dart test
+
+      - name: Run Player Engine Package Tests
+        run: |
+          cd packages/player
           flutter test
-          (cd packages/subtitle_core && flutter test)
+
+      - name: Run AI Intelligence Package Tests
+        run: |
+          cd packages/ai
+          flutter test
+
+      - name: Run Root Unit & Widget Tests
+        run: flutter test
+
+      - name: Run Backend Entitlement & API Tests
+        run: |
+          cd backend
+          pytest
 
       - name: Build Android Release Bundle Validation (Dry Run)
         run: flutter build appbundle --release --no-pub
 
       - name: Upload Test Coverage Artifacts
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report

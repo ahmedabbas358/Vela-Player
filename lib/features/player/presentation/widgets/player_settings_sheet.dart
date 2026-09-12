@@ -8,10 +8,7 @@ import '../../../../core/player/player_service.dart';
 class PlayerSettingsSheet extends StatelessWidget {
   final PlayerService playerService;
 
-  const PlayerSettingsSheet({
-    super.key,
-    required this.playerService,
-  });
+  const PlayerSettingsSheet({super.key, required this.playerService});
 
   static Future<void> show(BuildContext context, PlayerService playerService) {
     return showModalBottomSheet(
@@ -33,9 +30,7 @@ class PlayerSettingsSheet extends StatelessWidget {
           decoration: const BoxDecoration(
             color: Color(0xFF0F111A),
             borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-            border: Border(
-              top: BorderSide(color: Colors.white12, width: 0.5),
-            ),
+            border: Border(top: BorderSide(color: Colors.white12, width: 0.5)),
           ),
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
           child: Column(
@@ -90,7 +85,9 @@ class PlayerSettingsSheet extends StatelessWidget {
                               ? AppColors.primary.withValues(alpha: 0.2)
                               : Colors.white.withValues(alpha: 0.04),
                           side: BorderSide(
-                            color: isSelected ? AppColors.primary : Colors.white10,
+                            color: isSelected
+                                ? AppColors.primary
+                                : Colors.white10,
                           ),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
@@ -101,8 +98,9 @@ class PlayerSettingsSheet extends StatelessWidget {
                           mode.labelAr,
                           style: TextStyle(
                             color: isSelected ? Colors.white : Colors.white60,
-                            fontWeight:
-                                isSelected ? FontWeight.bold : FontWeight.normal,
+                            fontWeight: isSelected
+                                ? FontWeight.bold
+                                : FontWeight.normal,
                             fontSize: 12,
                           ),
                         ),
@@ -127,16 +125,31 @@ class PlayerSettingsSheet extends StatelessWidget {
                 scrollDirection: Axis.horizontal,
                 child: Row(
                   children: [
-                    _buildAspectChip('ملاءمة الشاشة (Fit)', VideoAspectMode.fit,
-                        state.aspectMode),
                     _buildAspectChip(
-                        'ملء الشاشة (Fill)', VideoAspectMode.fill, state.aspectMode),
-                    _buildAspectChip('الأصلي (1:1)', VideoAspectMode.original,
-                        state.aspectMode),
-                    _buildAspectChip('16:9 عريض', VideoAspectMode.ratio16x9,
-                        state.aspectMode),
-                    _buildAspectChip('21:9 سينمائي', VideoAspectMode.ratio21x9,
-                        state.aspectMode),
+                      'ملاءمة الشاشة (Fit)',
+                      VideoAspectMode.fit,
+                      state.aspectMode,
+                    ),
+                    _buildAspectChip(
+                      'ملء الشاشة (Fill)',
+                      VideoAspectMode.fill,
+                      state.aspectMode,
+                    ),
+                    _buildAspectChip(
+                      'الأصلي (1:1)',
+                      VideoAspectMode.original,
+                      state.aspectMode,
+                    ),
+                    _buildAspectChip(
+                      '16:9 عريض',
+                      VideoAspectMode.ratio16x9,
+                      state.aspectMode,
+                    ),
+                    _buildAspectChip(
+                      '21:9 سينمائي',
+                      VideoAspectMode.ratio21x9,
+                      state.aspectMode,
+                    ),
                   ],
                 ),
               ),
@@ -158,8 +171,11 @@ class PlayerSettingsSheet extends StatelessWidget {
                       children: [
                         const Row(
                           children: [
-                            Icon(Icons.repeat_one_rounded,
-                                color: AppColors.accent, size: 20),
+                            Icon(
+                              Icons.repeat_one_rounded,
+                              color: AppColors.accent,
+                              size: 20,
+                            ),
                             SizedBox(width: 8),
                             Text(
                               'تكرار مقطع (A-B Repeat) لتعلم اللغات',
@@ -176,7 +192,10 @@ class PlayerSettingsSheet extends StatelessWidget {
                             onPressed: playerService.clearAbRepeat,
                             child: const Text(
                               'إلغاء التكرار',
-                              style: TextStyle(color: Colors.redAccent, fontSize: 12),
+                              style: TextStyle(
+                                color: Colors.redAccent,
+                                fontSize: 12,
+                              ),
                             ),
                           ),
                       ],
@@ -211,7 +230,10 @@ class PlayerSettingsSheet extends StatelessWidget {
                                   : Colors.white12,
                               foregroundColor: Colors.white,
                             ),
-                            icon: const Icon(Icons.sports_score_outlined, size: 16),
+                            icon: const Icon(
+                              Icons.sports_score_outlined,
+                              size: 16,
+                            ),
                             label: Text(
                               state.abRepeat.pointB != null
                                   ? 'نقطة B: ${_formatDuration(state.abRepeat.pointB!)}'
@@ -235,7 +257,9 @@ class PlayerSettingsSheet extends StatelessWidget {
                 width: double.infinity,
                 child: ElevatedButton.icon(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.amber.shade900.withValues(alpha: 0.3),
+                    backgroundColor: Colors.amber.shade900.withValues(
+                      alpha: 0.3,
+                    ),
                     foregroundColor: Colors.amberAccent,
                     side: const BorderSide(color: Colors.amberAccent),
                     padding: const EdgeInsets.symmetric(vertical: 12),
@@ -263,7 +287,10 @@ class PlayerSettingsSheet extends StatelessWidget {
   }
 
   Widget _buildAspectChip(
-      String label, VideoAspectMode mode, VideoAspectMode current) {
+    String label,
+    VideoAspectMode mode,
+    VideoAspectMode current,
+  ) {
     final isSelected = current == mode;
     return Padding(
       padding: const EdgeInsets.only(right: 8),

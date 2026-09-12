@@ -65,8 +65,12 @@ class AcousticAutoSync {
     // 2. Build discrete binary activity vectors
     final audioSignal = List<double>.filled(bucketCount, 0.0);
     for (final interval in voiceIntervals) {
-      final startIdx = (interval.startMs / bucketResolutionMs).floor().clamp(0, bucketCount - 1);
-      final endIdx = (interval.endMs / bucketResolutionMs).ceil().clamp(0, bucketCount - 1);
+      final startIdx = (interval.startMs / bucketResolutionMs)
+          .floor()
+          .clamp(0, bucketCount - 1);
+      final endIdx = (interval.endMs / bucketResolutionMs)
+          .ceil()
+          .clamp(0, bucketCount - 1);
       for (int i = startIdx; i <= endIdx; i++) {
         audioSignal[i] = interval.confidence;
       }
@@ -74,8 +78,10 @@ class AcousticAutoSync {
 
     final subSignal = List<double>.filled(bucketCount, 0.0);
     for (final cue in cues) {
-      final startIdx = (cue.startMs / bucketResolutionMs).floor().clamp(0, bucketCount - 1);
-      final endIdx = (cue.endMs / bucketResolutionMs).ceil().clamp(0, bucketCount - 1);
+      final startIdx =
+          (cue.startMs / bucketResolutionMs).floor().clamp(0, bucketCount - 1);
+      final endIdx =
+          (cue.endMs / bucketResolutionMs).ceil().clamp(0, bucketCount - 1);
       for (int i = startIdx; i <= endIdx; i++) {
         subSignal[i] = 1.0;
       }
@@ -112,8 +118,9 @@ class AcousticAutoSync {
     // 4. Calculate alignment confidence score
     double confidence = 0.0;
     if (maxCorrelation > 0) {
-      confidence = (maxCorrelation / (math.max(zeroShiftCorrelation, 1.0) * 1.5))
-          .clamp(0.2, 0.98);
+      confidence =
+          (maxCorrelation / (math.max(zeroShiftCorrelation, 1.0) * 1.5))
+              .clamp(0.2, 0.98);
     }
 
     // 5. Apply calculated offset

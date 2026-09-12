@@ -26,7 +26,8 @@ class ContextAwareTranslationEngine {
     required String sourceLanguage,
     required String targetLanguage,
     TranslationGlossary glossary = TranslationGlossary.empty,
-    Future<List<String>> Function(List<String> maskedBatch, String promptContext)?
+    Future<List<String>> Function(
+            List<String> maskedBatch, String promptContext)?
         translationProvider,
   }) async {
     if (sourceCues.isEmpty) return [];
@@ -35,7 +36,9 @@ class ContextAwareTranslationEngine {
 
     // Process cues in sliding context batches
     for (int i = 0; i < sourceCues.length; i += batchSize) {
-      final end = (i + batchSize < sourceCues.length) ? i + batchSize : sourceCues.length;
+      final end = (i + batchSize < sourceCues.length)
+          ? i + batchSize
+          : sourceCues.length;
       final batch = sourceCues.sublist(i, end);
 
       final translatedBatch = await _translateBatch(
@@ -57,7 +60,8 @@ class ContextAwareTranslationEngine {
     required String sourceLang,
     required String targetLang,
     required TranslationGlossary glossary,
-    Future<List<String>> Function(List<String> maskedBatch, String promptContext)?
+    Future<List<String>> Function(
+            List<String> maskedBatch, String promptContext)?
         provider,
   }) async {
     final maskedTexts = <String>[];
@@ -99,7 +103,8 @@ class ContextAwareTranslationEngine {
     final translatedCues = <UnifiedSubtitleCue>[];
     for (int i = 0; i < batch.length; i++) {
       final originalCue = batch[i];
-      String finalText = (i < translatedTexts.length) ? translatedTexts[i] : maskedTexts[i];
+      String finalText =
+          (i < translatedTexts.length) ? translatedTexts[i] : maskedTexts[i];
 
       finalText = _unmaskGlossaryTerms(finalText, termMaps[i]);
       finalText = _unmaskFormattingTags(finalText, tagMaps[i]);

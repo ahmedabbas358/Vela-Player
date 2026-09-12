@@ -67,7 +67,9 @@ class _DiagnosticHudOverlayState extends State<DiagnosticHudOverlay> {
   String _getDecoderName(DecoderMode mode) {
     switch (mode) {
       case DecoderMode.hw:
-        return Platform.isAndroid ? 'MediaCodec (c2.qti.hevc.decoder - HW)' : 'VideoToolbox (Hardware HEVC)';
+        return Platform.isAndroid
+            ? 'MediaCodec (c2.qti.hevc.decoder - HW)'
+            : 'VideoToolbox (Hardware HEVC)';
       case DecoderMode.hwPlus:
         return 'Custom GLSurfaceView Shaders + MediaCodec (HW+)';
       case DecoderMode.sw:
@@ -88,7 +90,10 @@ class _DiagnosticHudOverlayState extends State<DiagnosticHudOverlay> {
         decoration: BoxDecoration(
           color: Colors.black.withValues(alpha: 0.88),
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: Colors.greenAccent.withValues(alpha: 0.7), width: 1.2),
+          border: Border.all(
+            color: Colors.greenAccent.withValues(alpha: 0.7),
+            width: 1.2,
+          ),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.6),
@@ -107,7 +112,11 @@ class _DiagnosticHudOverlayState extends State<DiagnosticHudOverlay> {
               children: [
                 const Row(
                   children: [
-                    Icon(Icons.terminal_rounded, color: Colors.greenAccent, size: 16),
+                    Icon(
+                      Icons.terminal_rounded,
+                      color: Colors.greenAccent,
+                      size: 16,
+                    ),
                     SizedBox(width: 6),
                     Text(
                       'VELA DIAGNOSTICS HUD',
@@ -123,26 +132,57 @@ class _DiagnosticHudOverlayState extends State<DiagnosticHudOverlay> {
                 ),
                 GestureDetector(
                   onTap: widget.onClose,
-                  child: const Icon(Icons.close, color: Colors.white70, size: 18),
+                  child: const Icon(
+                    Icons.close,
+                    color: Colors.white70,
+                    size: 18,
+                  ),
                 ),
               ],
             ),
-            const Divider(color: Colors.greenAccent, height: 16, thickness: 0.5),
+            const Divider(
+              color: Colors.greenAccent,
+              height: 16,
+              thickness: 0.5,
+            ),
 
             // Diagnostic Metrics Rows
             _buildMetricRow('Engine', _getEngineName(state.decoderMode)),
             _buildMetricRow('Decoder', _getDecoderName(state.decoderMode)),
-            _buildMetricRow('Renderer', state.decoderMode == DecoderMode.hwPlus ? 'Metal / GL Custom Shaders' : 'SurfaceView (Direct Zero-Copy)'),
-            _buildMetricRow('Video Codec', 'HEVC Main 10@L5.1 (10-bit YUV420p)'),
+            _buildMetricRow(
+              'Renderer',
+              state.decoderMode == DecoderMode.hwPlus
+                  ? 'Metal / GL Custom Shaders'
+                  : 'SurfaceView (Direct Zero-Copy)',
+            ),
+            _buildMetricRow(
+              'Video Codec',
+              'HEVC Main 10@L5.1 (10-bit YUV420p)',
+            ),
             _buildMetricRow('Resolution', '3840x2160 (4K UHD 16:9)'),
-            _buildMetricRow('Frame Rate', '${_simulatedFps.toStringAsFixed(2)} fps'),
+            _buildMetricRow(
+              'Frame Rate',
+              '${_simulatedFps.toStringAsFixed(2)} fps',
+            ),
             _buildMetricRow('Dropped Frames', '$_droppedFrames (0.00%)'),
-            _buildMetricRow('Bitrate', '${_bitrateMbps.toStringAsFixed(1)} Mbps'),
-            _buildMetricRow('Buffer Health', '${_bufferSeconds.toStringAsFixed(1)} s forward cache'),
-            _buildMetricRow('Audio Route', 'Acoustic Headset (24-bit / 48kHz PCM)'),
+            _buildMetricRow(
+              'Bitrate',
+              '${_bitrateMbps.toStringAsFixed(1)} Mbps',
+            ),
+            _buildMetricRow(
+              'Buffer Health',
+              '${_bufferSeconds.toStringAsFixed(1)} s forward cache',
+            ),
+            _buildMetricRow(
+              'Audio Route',
+              'Acoustic Headset (24-bit / 48kHz PCM)',
+            ),
             _buildMetricRow('Sub Latency', '3.8 ms (Rendered on Canvas)'),
             _buildMetricRow('HDR / Color', 'HDR10 (SMPTE ST 2084 / BT.2020)'),
-            _buildMetricRow('Memory Footprint', '94.2 MB RAM (Streaming buffer)'),
+            _buildMetricRow(
+              'Memory Footprint',
+              '94.2 MB RAM (Streaming buffer)',
+            ),
             _buildMetricRow('Thermal State', 'Nominal (Cold / Optimal)'),
           ],
         ),

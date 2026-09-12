@@ -1,59 +1,78 @@
 import '../models/unified_subtitle_cue.dart';
 
 /// High-performance parser for SubRip (.srt) subtitle files.
+/// Optimized with single-pass line scanning, resilient timestamp extraction, and UTF-8 BOM handling.
 class SrtParser {
   static final RegExp _timingRegex = RegExp(
-    r'(\d{2}):(\d{2}):(\d{2})[,.](\d{3})\s*-->\s*(\d{2}):(\d{2}):(\d{2})[,.](\d{3})',
+    r'(\d{1,2}):(\d{1,2}):(\d{1,2})[,.](\d{1,4})\s*-->\s*(\d{1,2}):(\d{1,2}):(\d{1,2})[,.](\d{1,4})',
   );
 
   /// Parses raw SRT content string into a list of [UnifiedSubtitleCue].
   static List<UnifiedSubtitleCue> parse(String content) {
     if (content.isEmpty) return [];
 
-    final normalized = content.replaceAll('\r\n', '\n').replaceAll('\r', '\n');
-    final blocks = normalized.split(RegExp(r'\n{2,}'));
+    var cleaned = content;
+    if (cleaned.startsWith('\uFEFF')) {
+      cleaned = cleaned.substring(1);
+    }
+
+    final normalized = cleaned.replaceAll('\r\n', '\n').replaceAll('\r', '\n');
+    final lines = normalized.split('\n');
     final List<UnifiedSubtitleCue> cues = [];
 
     int indexCounter = 1;
+    int i = 0;
+    final int lineCount = lines.length;
 
-    for (final block in blocks) {
-      final lines = block.trim().split('\n');
-      if (lines.length < 2) continue;
+    while (i < lineCount) {
+      final line = lines[i].trim();
+      if (line.isEmpty) {
+        i++;
+        continue;
+      }
 
-      int timeLineIndex = -1;
-      Match? match;
+      // Check if current or next line has timing
+      Match? match = _timingRegex.firstMatch(line);
+      int timeLineIdx = i;
 
-      for (int i = 0; i < lines.length; i++) {
-        final currentMatch = _timingRegex.firstMatch(lines[i]);
-        if (currentMatch != null) {
-          timeLineIndex = i;
-          match = currentMatch;
-          break;
+      if (match == null && i + 1 < lineCount) {
+        match = _timingRegex.firstMatch(lines[i + 1].trim());
+        if (match != null) {
+          timeLineIdx = i + 1;
         }
       }
 
-      if (match == null || timeLineIndex == -1) continue;
+      if (match == null) {
+        i++;
+        continue;
+      }
 
       final startMs = _parseTimestamp(
         int.parse(match.group(1)!),
         int.parse(match.group(2)!),
         int.parse(match.group(3)!),
-        int.parse(match.group(4)!),
+        _normalizeMillis(match.group(4)!),
       );
 
       final endMs = _parseTimestamp(
         int.parse(match.group(5)!),
         int.parse(match.group(6)!),
         int.parse(match.group(7)!),
-        int.parse(match.group(8)!),
+        _normalizeMillis(match.group(8)!),
       );
 
-      final textLines = lines.sublist(timeLineIndex + 1);
-      final rawText = textLines.join('\n').trim();
+      // Collect subtitle text until blank line or EOF
+      final textBuffer = StringBuffer();
+      int textIdx = timeLineIdx + 1;
+      while (textIdx < lineCount && lines[textIdx].trim().isNotEmpty) {
+        if (textBuffer.isNotEmpty) textBuffer.write('\n');
+        textBuffer.write(lines[textIdx].trim());
+        textIdx++;
+      }
 
-      // Check for speaker tag e.g. "John: Hello" or "<v John>Hello"
-      String? speaker;
+      final rawText = textBuffer.toString();
       String cleanText = rawText;
+      String? speaker;
 
       final speakerMatch =
           RegExp(r'^<v\s+([^>]+)>(.*)$', dotAll: true).firstMatch(rawText) ??
@@ -65,8 +84,9 @@ class SrtParser {
         cleanText = speakerMatch.group(2)?.trim() ?? rawText;
       }
 
-      // Strip basic HTML formatting for text storage, preserve rawFormatting
-      cleanText = cleanText.replaceAll(RegExp(r'<[^>]*>'), '');
+      if (cleanText.contains('<')) {
+        cleanText = cleanText.replaceAll(RegExp(r'<[^>]*>'), '');
+      }
 
       cues.add(
         UnifiedSubtitleCue(
@@ -81,9 +101,17 @@ class SrtParser {
       );
 
       indexCounter++;
+      i = textIdx + 1;
     }
 
     return cues;
+  }
+
+  static int _normalizeMillis(String millisStr) {
+    if (millisStr.length >= 3) {
+      return int.parse(millisStr.substring(0, 3));
+    }
+    return int.parse(millisStr.padRight(3, '0'));
   }
 
   static int _parseTimestamp(

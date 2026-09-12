@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/subtitles/subtitle_manager.dart';
+import '../../billing/presentation/subscription_sheet.dart';
 import '../../player/presentation/video_player_screen.dart';
 import '../../subtitles/presentation/subtitle_studio_sheet.dart';
 
@@ -16,7 +17,7 @@ class HomeScreen extends ConsumerWidget {
 
   static const String sampleSrtContent = '''1
 00:00:01,000 --> 00:00:04,500
-[راوي]: مرحباً بكم في تطبيق LumaSub لمشاهدة الفيديو والترجمة الذكية.
+[راوي]: مرحباً بكم في تطبيق Vela Player لمشاهدة الفيديو والترجمة الذكية.
 
 2
 00:00:05,000 --> 00:00:09,000
@@ -78,8 +79,25 @@ class HomeScreen extends ConsumerWidget {
           // App Bar
           SliverAppBar(
             expandedHeight: 180.0,
-            pinned: true,
-            backgroundColor: AppColors.surface,
+            actions: [
+              TextButton.icon(
+                style: TextButton.styleFrom(
+                  backgroundColor: AppColors.accent.withValues(alpha: 0.2),
+                  foregroundColor: AppColors.accent,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    side: const BorderSide(color: AppColors.accent, width: 0.8),
+                  ),
+                ),
+                icon: const Icon(Icons.auto_awesome, size: 14),
+                label: const Text(
+                  'PRO AI',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 11),
+                ),
+                onPressed: () => SubscriptionSheet.show(context),
+              ),
+              const SizedBox(width: 12),
+            ],
             flexibleSpace: FlexibleSpaceBar(
               titlePadding: const EdgeInsets.symmetric(
                 horizontal: 20,
@@ -104,7 +122,7 @@ class HomeScreen extends ConsumerWidget {
                   ),
                   const SizedBox(width: 10),
                   const Text(
-                    'LumaSub',
+                    'Vela Player',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       letterSpacing: 1.2,

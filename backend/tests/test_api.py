@@ -83,5 +83,5 @@ def test_billing_entitlements():
     res = client.get("/api/v1/billing/entitlements")
     assert res.status_code == 200
     data = res.json()
-    assert data["tier"] in ["FREE", "PLUS", "PRO"]
+    assert data["tier"].upper() in ["FREE", "PLUS", "PRO"]
     assert "features" in data

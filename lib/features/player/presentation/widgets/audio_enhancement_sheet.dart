@@ -8,10 +8,7 @@ import '../../../../core/player/player_service.dart';
 class AudioEnhancementSheet extends StatefulWidget {
   final PlayerService playerService;
 
-  const AudioEnhancementSheet({
-    super.key,
-    required this.playerService,
-  });
+  const AudioEnhancementSheet({super.key, required this.playerService});
 
   static Future<void> show(BuildContext context, PlayerService playerService) {
     return showModalBottomSheet(
@@ -54,15 +51,16 @@ class _AudioEnhancementSheetState extends State<AudioEnhancementSheet>
           decoration: const BoxDecoration(
             color: Color(0xFF0F111A),
             borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-            border: Border(
-              top: BorderSide(color: Colors.white12, width: 0.5),
-            ),
+            border: Border(top: BorderSide(color: Colors.white12, width: 0.5)),
           ),
           child: Column(
             children: [
               // Sheet Header
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 16,
+                ),
                 decoration: const BoxDecoration(
                   border: Border(
                     bottom: BorderSide(color: Colors.white10, width: 0.5),
@@ -181,7 +179,9 @@ class _AudioEnhancementSheetState extends State<AudioEnhancementSheet>
                   labelStyle: TextStyle(
                     color: isSelected ? Colors.white : Colors.white70,
                     fontSize: 12,
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                    fontWeight: isSelected
+                        ? FontWeight.bold
+                        : FontWeight.normal,
                   ),
                   onSelected: (selected) {
                     if (selected) {
@@ -258,10 +258,7 @@ class _AudioEnhancementSheetState extends State<AudioEnhancementSheet>
                   ),
                   Text(
                     freqLabel,
-                    style: const TextStyle(
-                      color: Colors.white54,
-                      fontSize: 10,
-                    ),
+                    style: const TextStyle(color: Colors.white54, fontSize: 10),
                   ),
                 ],
               );
@@ -318,8 +315,10 @@ class _AudioEnhancementSheetState extends State<AudioEnhancementSheet>
                     ],
                   ),
                   Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
                       color: state.isAudioBoosted
                           ? AppColors.accent
@@ -355,10 +354,7 @@ class _AudioEnhancementSheetState extends State<AudioEnhancementSheet>
                   padding: EdgeInsets.only(top: 4),
                   child: Text(
                     '⚡ تفعيل التضخيم العالي (+12dB Preamp Boost) مع حماية ضد تشويه الصوت (Soft Limiter).',
-                    style: TextStyle(
-                      color: AppColors.accent,
-                      fontSize: 11,
-                    ),
+                    style: TextStyle(color: AppColors.accent, fontSize: 11),
                   ),
                 ),
             ],
@@ -394,10 +390,7 @@ class _AudioEnhancementSheetState extends State<AudioEnhancementSheet>
                       ),
                       Text(
                         'موازنة الصوت: رفع الهمس وخفض الانفجارات المفاجئة',
-                        style: TextStyle(
-                          color: Colors.white54,
-                          fontSize: 11,
-                        ),
+                        style: TextStyle(color: Colors.white54, fontSize: 11),
                       ),
                     ],
                   ),
@@ -457,8 +450,9 @@ class _AudioEnhancementSheetState extends State<AudioEnhancementSheet>
                       foregroundColor: Colors.white,
                     ),
                     onPressed: () {
-                      widget.playerService
-                          .setAudioDelay(state.audioDelayMs - 100);
+                      widget.playerService.setAudioDelay(
+                        state.audioDelayMs - 100,
+                      );
                     },
                     child: const Text('-100 ms'),
                   ),
@@ -478,8 +472,9 @@ class _AudioEnhancementSheetState extends State<AudioEnhancementSheet>
                       foregroundColor: Colors.white,
                     ),
                     onPressed: () {
-                      widget.playerService
-                          .setAudioDelay(state.audioDelayMs + 100);
+                      widget.playerService.setAudioDelay(
+                        state.audioDelayMs + 100,
+                      );
                     },
                     child: const Text('+100 ms'),
                   ),
@@ -517,7 +512,10 @@ class _AudioEnhancementSheetState extends State<AudioEnhancementSheet>
                 ),
               ),
               trailing: isSelected
-                  ? const Icon(Icons.check_circle, color: AppColors.primaryLight)
+                  ? const Icon(
+                      Icons.check_circle,
+                      color: AppColors.primaryLight,
+                    )
                   : null,
               onTap: () {
                 widget.playerService.setAudioTrack(track);
