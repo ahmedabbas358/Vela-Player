@@ -89,4 +89,40 @@ Dialogue: 0,0:01:20.50,0:01:23.00,Default,Eren,0,0,0,,{\\pos(192,240)}Hear me!\\
       expect(drifted[1].startMs, equals(53000));
     });
   });
+
+  group('AcousticAutoSync', () {
+    test('automatically detects delayed speech and aligns subtitle cues', () {
+      // Subtitle cue starts at 1000ms
+      final cues = [
+        const UnifiedSubtitleCue(
+          id: 'cue_1',
+          index: 1,
+          startMs: 1000,
+          endMs: 3000,
+          text: 'Voice speech here',
+        ),
+      ];
+
+      // Audio voice activity actually occurs at 2500ms (1500ms delay!)
+      final voiceIntervals = [
+        const VoiceActivityInterval(
+          startMs: 2500,
+          endMs: 4500,
+          confidence: 0.95,
+        ),
+      ];
+
+      final result = AcousticAutoSync.alignWithAudio(
+        voiceIntervals: voiceIntervals,
+        cues: cues,
+      );
+
+      // Should find the 1500ms offset
+      expect(result.optimalOffsetMs, equals(1500));
+      expect(result.confidence, greaterThan(0.5));
+      expect(result.synchronizedCues[0].startMs, equals(2500));
+      expect(result.synchronizedCues[0].endMs, equals(4500));
+    });
+  });
 }
+

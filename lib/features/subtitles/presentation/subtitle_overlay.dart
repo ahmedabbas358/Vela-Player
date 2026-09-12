@@ -28,6 +28,12 @@ class _SubtitleOverlayState extends ConsumerState<SubtitleOverlay> {
           return GoogleFonts.tajawal(textStyle: baseStyle);
         case 'amiri':
           return GoogleFonts.amiri(textStyle: baseStyle);
+        case 'readex pro':
+          return GoogleFonts.readexPro(textStyle: baseStyle);
+        case 'noto sans arabic':
+          return GoogleFonts.notoSansArabic(textStyle: baseStyle);
+        case 'inter':
+          return GoogleFonts.inter(textStyle: baseStyle);
         case 'outfit':
           return GoogleFonts.outfit(textStyle: baseStyle);
         case 'rubik':

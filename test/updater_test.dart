@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:luma_sub/core/updater/app_update_service.dart';
+import 'package:vela_player/core/updater/app_update_service.dart';
 
 void main() {
   group('AppUpdateInfo Version Comparison', () {

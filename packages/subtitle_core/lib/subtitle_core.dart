@@ -6,4 +6,5 @@ export 'parsers/ass_parser.dart';
 export 'parsers/subtitle_parser_factory.dart';
 export 'repair/subtitle_health_evaluator.dart';
 export 'sync/drift_corrector.dart';
+export 'sync/acoustic_auto_sync.dart';
 export 'export/subtitle_exporter.dart';

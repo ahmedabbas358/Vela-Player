@@ -51,6 +51,7 @@ ahmedabbas358/Vela-Player
 │   └── ai/                        # Character profiles, AI job contracts
 │
 ├── docs/                          # Complete Technical Specification Suite
+│   ├── MASTER_SYSTEM_ARCHITECTURE_AND_PROMPT.md # Comprehensive 16-chapter engineering plan & definitive build prompt
 │   ├── MASTER_ENGINEERING_PLAN_AND_PROMPT.md # Master 18-section plan and build prompt
 │   ├── PRD.md                     # Product requirements document
 │   ├── ARCHITECTURE.md            # System architecture & hardware decoding

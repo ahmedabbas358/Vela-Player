@@ -18,7 +18,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    namespace = "com.lumasub.app.luma_sub"
+    namespace = "com.velaplayer.app"
     compileSdk = 36
     ndkVersion = flutter.ndkVersion
 
@@ -80,4 +80,11 @@ kotlin {
 
 flutter {
     source = "../.."
+}
+
+dependencies {
+    // Official AndroidX Media3 1.11.0 (Released August 2026)
+    implementation("androidx.media3:media3-exoplayer:1.11.0")
+    implementation("androidx.media3:media3-session:1.11.0")
+    implementation("androidx.media3:media3-ui:1.11.0")
 }

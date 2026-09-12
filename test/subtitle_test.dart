@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:luma_sub/core/subtitles/models/subtitle_style.dart';
-import 'package:luma_sub/core/subtitles/parsers/srt_parser.dart';
-import 'package:luma_sub/core/subtitles/parsers/vtt_parser.dart';
-import 'package:luma_sub/core/subtitles/subtitle_manager.dart';
+import 'package:vela_player/core/subtitles/models/subtitle_style.dart';
+import 'package:vela_player/core/subtitles/parsers/srt_parser.dart';
+import 'package:vela_player/core/subtitles/parsers/vtt_parser.dart';
+import 'package:vela_player/core/subtitles/subtitle_manager.dart';
 
 void main() {
   group('Subtitle Parsers Tests', () {

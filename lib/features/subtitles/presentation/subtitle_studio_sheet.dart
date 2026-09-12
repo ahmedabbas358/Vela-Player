@@ -29,9 +29,12 @@ class _SubtitleStudioSheetState extends ConsumerState<SubtitleStudioSheet>
   late SubtitleStyle _currentStyle;
 
   final List<String> _availableFonts = [
+    'Readex Pro',
     'Cairo',
     'Tajawal',
+    'Noto Sans Arabic',
     'Amiri',
+    'Inter',
     'Outfit',
     'Rubik',
     'Roboto',
@@ -204,14 +207,23 @@ class _SubtitleStudioSheetState extends ConsumerState<SubtitleStudioSheet>
 
     TextStyle fontStyle;
     switch (_currentStyle.fontFamily.toLowerCase()) {
+      case 'readex pro':
+        fontStyle = GoogleFonts.readexPro(textStyle: base);
+        break;
       case 'cairo':
         fontStyle = GoogleFonts.cairo(textStyle: base);
         break;
       case 'tajawal':
         fontStyle = GoogleFonts.tajawal(textStyle: base);
         break;
+      case 'noto sans arabic':
+        fontStyle = GoogleFonts.notoSansArabic(textStyle: base);
+        break;
       case 'amiri':
         fontStyle = GoogleFonts.amiri(textStyle: base);
+        break;
+      case 'inter':
+        fontStyle = GoogleFonts.inter(textStyle: base);
         break;
       case 'outfit':
         fontStyle = GoogleFonts.outfit(textStyle: base);

@@ -5,12 +5,16 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:media_kit_video/media_kit_video.dart';
+import 'package:player/player.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/player/player_service.dart';
 import '../../../core/subtitles/subtitle_manager.dart';
 import '../../subtitles/presentation/subtitle_overlay.dart';
 import '../../subtitles/presentation/subtitle_studio_sheet.dart';
+import 'widgets/audio_enhancement_sheet.dart';
+import 'widgets/diagnostic_hud_overlay.dart';
+import 'widgets/player_settings_sheet.dart';
 import 'widgets/subtitle_quick_offset_dialog.dart';
 
 class VideoPlayerScreen extends ConsumerStatefulWidget {
@@ -32,6 +36,7 @@ class VideoPlayerScreen extends ConsumerStatefulWidget {
 class _VideoPlayerScreenState extends ConsumerState<VideoPlayerScreen> {
   late final PlayerService _playerService;
   bool _showControls = true;
+  bool _showDiagnosticHud = false;
   Timer? _controlsTimer;
 
   // Gesture indicators
@@ -39,6 +44,10 @@ class _VideoPlayerScreenState extends ConsumerState<VideoPlayerScreen> {
   double? _brightnessIndicator;
   Duration? _seekDragTarget;
   Timer? _indicatorDismissTimer;
+
+  // Kids lock tap unlock tracker
+  int _kidsLockTapCount = 0;
+  Timer? _kidsLockResetTimer;
 
   @override
   void initState() {
@@ -80,6 +89,8 @@ class _VideoPlayerScreenState extends ConsumerState<VideoPlayerScreen> {
   }
 
   void _toggleControls() {
+    if (_playerService.state.isKidsLocked) return;
+
     setState(() {
       _showControls = !_showControls;
     });
@@ -98,55 +109,55 @@ class _VideoPlayerScreenState extends ConsumerState<VideoPlayerScreen> {
         ref
             .read(subtitleProvider.notifier)
             .loadContent(content, fileName: fileName);
-        _showSnackBar('تم تحميل الترجمة: $fileName');
       }
     } catch (e) {
-      _showSnackBar('خطأ في تحميل ملف الترجمة: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('تعذر تحميل ملف الترجمة: $e'),
+            backgroundColor: Colors.redAccent,
+          ),
+        );
+      }
     }
   }
 
   Future<String?> _readSubtitleContent(String path) async {
+    final file = File(path);
+    if (!await file.exists()) return null;
+
+    final bytes = await file.readAsBytes();
     try {
-      final file = File(path);
-      return await file.readAsString();
+      return String.fromCharCodes(bytes);
     } catch (_) {
-      return null;
+      return await file.readAsString();
     }
   }
 
   Future<void> _pickExternalSubtitle() async {
     final files = await FilePicker.pickFiles(
       type: FileType.custom,
-      allowedExtensions: ['srt', 'vtt', 'ass', 'ssa'],
+      allowedExtensions: ['srt', 'vtt', 'ass', 'ssa', 'sub'],
     );
 
     if (files.isNotEmpty && files.first.path != null) {
-      final path = files.first.path!;
-      final content = await _readSubtitleContent(path);
-      if (content != null) {
-        ref
-            .read(subtitleProvider.notifier)
-            .loadContent(content, fileName: files.first.name);
-        _showSnackBar('تم تحميل الترجمة: ${files.first.name}');
+      await _loadSubtitleFromFile(files.first.path!);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('تم تحميل الترجمة: ${files.first.name}'),
+            backgroundColor: AppColors.primary,
+          ),
+        );
       }
     }
-  }
-
-  void _showSnackBar(String message) {
-    if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        duration: const Duration(seconds: 2),
-        backgroundColor: AppColors.surfaceElevated,
-      ),
-    );
   }
 
   @override
   void dispose() {
     _controlsTimer?.cancel();
     _indicatorDismissTimer?.cancel();
+    _kidsLockResetTimer?.cancel();
     _playerService.removeListener(_onPlayerStateChanged);
     _playerService.dispose();
     super.dispose();
@@ -164,6 +175,20 @@ class _VideoPlayerScreenState extends ConsumerState<VideoPlayerScreen> {
     }
   }
 
+  BoxFit _getAspectBoxFit(VideoAspectMode mode) {
+    switch (mode) {
+      case VideoAspectMode.fit:
+        return BoxFit.contain;
+      case VideoAspectMode.fill:
+        return BoxFit.cover;
+      case VideoAspectMode.original:
+        return BoxFit.none;
+      case VideoAspectMode.ratio16x9:
+      case VideoAspectMode.ratio21x9:
+        return BoxFit.fill;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final pState = _playerService.state;
@@ -174,36 +199,63 @@ class _VideoPlayerScreenState extends ConsumerState<VideoPlayerScreen> {
       body: Stack(
         fit: StackFit.expand,
         children: [
-          // 1. Core Media Player View
+          // 1. Core Media Player View with Dynamic Aspect Ratio Scaling
           Center(
-            child: Video(
-              controller: _playerService.controller,
-              controls: NoVideoControls,
+            child: FittedBox(
+              fit: _getAspectBoxFit(pState.aspectMode),
+              child: SizedBox(
+                width: pState.aspectMode == VideoAspectMode.ratio16x9
+                    ? 1920
+                    : (pState.aspectMode == VideoAspectMode.ratio21x9
+                        ? 2560
+                        : MediaQuery.of(context).size.width),
+                height: pState.aspectMode == VideoAspectMode.ratio16x9
+                    ? 1080
+                    : (pState.aspectMode == VideoAspectMode.ratio21x9
+                        ? 1080
+                        : MediaQuery.of(context).size.height),
+                child: Video(
+                  controller: _playerService.controller,
+                  controls: NoVideoControls,
+                ),
+              ),
             ),
           ),
 
           // 2. Interactive Subtitle Overlay Layer
           const SubtitleOverlay(),
 
-          // 3. Gesture Detector Layer (Double tap seek, drags for volume/brightness/scrubbing)
-          _buildGestureLayer(pState),
+          // 3. Gesture Detector Layer (Double tap seek, volume/brightness/scrubbing, 2.0x long press)
+          if (!pState.isKidsLocked) _buildGestureLayer(pState),
 
-          // 4. Center Gesture HUD Indicators (Volume / Seek)
-          _buildGestureIndicators(),
+          // 4. Center Gesture HUD Indicators (Volume / Seek / 2.0x Speed Boost)
+          _buildGestureIndicators(pState),
 
           // 5. Controls Overlay (Top Bar & Bottom Scrubber)
-          AnimatedOpacity(
-            opacity: _showControls ? 1.0 : 0.0,
-            duration: const Duration(milliseconds: 250),
-            child: IgnorePointer(
-              ignoring: !_showControls,
-              child: _buildControlsUI(pState, subState),
+          if (!pState.isKidsLocked)
+            AnimatedOpacity(
+              opacity: _showControls ? 1.0 : 0.0,
+              duration: const Duration(milliseconds: 250),
+              child: IgnorePointer(
+                ignoring: !_showControls,
+                child: _buildControlsUI(pState, subState),
+              ),
             ),
-          ),
+
+          // 6. Kids Lock Floating Unlock Button
+          if (pState.isKidsLocked) _buildKidsLockOverlay(),
+
+          // 7. Developer Diagnostic HUD Mode ("Stats for Nerds")
+          if (_showDiagnosticHud)
+            DiagnosticHudOverlay(
+              playerService: _playerService,
+              onClose: () => setState(() => _showDiagnosticHud = false),
+            ),
         ],
       ),
     );
   }
+
 
   Widget _buildGestureLayer(PlayerStateData pState) {
     return LayoutBuilder(
@@ -214,6 +266,9 @@ class _VideoPlayerScreenState extends ConsumerState<VideoPlayerScreen> {
         return GestureDetector(
           behavior: HitTestBehavior.opaque,
           onTap: _toggleControls,
+          // Long press 2.0x speed boost
+          onLongPressStart: (_) => _playerService.startSpeedBoost(),
+          onLongPressEnd: (_) => _playerService.endSpeedBoost(),
           onDoubleTapDown: (details) {
             final x = details.localPosition.dx;
             if (x < screenWidth * 0.35) {
@@ -247,9 +302,9 @@ class _VideoPlayerScreenState extends ConsumerState<VideoPlayerScreen> {
               });
               _resetIndicatorTimer();
             } else {
-              // Right half: Volume
+              // Right half: Volume (with 200% Audio Boost support!)
               final currentVol = pState.volume;
-              final newVol = (currentVol + (delta * 100)).clamp(0.0, 100.0);
+              final newVol = (currentVol + (delta * 150)).clamp(0.0, 200.0);
               _playerService.setVolume(newVol);
               setState(() {
                 _volumeIndicator = newVol;
@@ -283,66 +338,187 @@ class _VideoPlayerScreenState extends ConsumerState<VideoPlayerScreen> {
     });
   }
 
-  Widget _buildGestureIndicators() {
-    if (_volumeIndicator == null &&
-        _brightnessIndicator == null &&
-        _seekDragTarget == null) {
-      return const SizedBox.shrink();
-    }
+  Widget _buildGestureIndicators(PlayerStateData pState) {
+    return Stack(
+      children: [
+        // 2.0X Speed Boost Floating Badge at top
+        if (pState.isSpeedBoosted)
+          Align(
+            alignment: Alignment.topCenter,
+            child: Container(
+              margin: const EdgeInsets.only(top: 60),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                color: AppColors.accent.withValues(alpha: 0.9),
+                borderRadius: BorderRadius.circular(24),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.accent.withValues(alpha: 0.5),
+                    blurRadius: 16,
+                    spreadRadius: 2,
+                  ),
+                ],
+              ),
+              child: const Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.bolt_rounded, color: Colors.white, size: 20),
+                  SizedBox(width: 6),
+                  Text(
+                    '2.0X تسريع فوري (Fast-Forward)',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
 
-    return Center(
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-        decoration: BoxDecoration(
-          color: Colors.black.withValues(alpha: 0.75),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.white24),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (_volumeIndicator != null) ...[
-              Icon(
-                _volumeIndicator! == 0 ? Icons.volume_off : Icons.volume_up,
-                color: AppColors.primaryLight,
-                size: 36,
+        // Center HUD for Volume / Brightness / Seek
+        if (_volumeIndicator != null ||
+            _brightnessIndicator != null ||
+            _seekDragTarget != null)
+          Center(
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+              decoration: BoxDecoration(
+                color: Colors.black.withValues(alpha: 0.8),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: (_volumeIndicator != null && _volumeIndicator! > 100.0)
+                      ? AppColors.accent
+                      : Colors.white24,
+                  width: (_volumeIndicator != null && _volumeIndicator! > 100.0)
+                      ? 2
+                      : 1,
+                ),
               ),
-              const SizedBox(height: 8),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (_volumeIndicator != null) ...[
+                    Icon(
+                      _volumeIndicator! == 0
+                          ? Icons.volume_off
+                          : (_volumeIndicator! > 100
+                              ? Icons.offline_bolt_rounded
+                              : Icons.volume_up),
+                      color: _volumeIndicator! > 100
+                          ? AppColors.accent
+                          : AppColors.primaryLight,
+                      size: 40,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      _volumeIndicator! > 100
+                          ? 'مضخم الصوت: ${_volumeIndicator!.toInt()}%'
+                          : 'الصوت: ${_volumeIndicator!.toInt()}%',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        color: _volumeIndicator! > 100
+                            ? AppColors.accent
+                            : Colors.white,
+                      ),
+                    ),
+                    if (_volumeIndicator! > 100)
+                      const Text(
+                        '⚡ +12dB Audio Boost',
+                        style: TextStyle(color: AppColors.accent, fontSize: 11),
+                      ),
+                  ],
+                  if (_brightnessIndicator != null) ...[
+                    const Icon(Icons.brightness_6,
+                        color: Colors.amber, size: 40),
+                    const SizedBox(height: 8),
+                    Text(
+                      'السطوع: ${(_brightnessIndicator! * 100).toInt()}%',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ],
+                  if (_seekDragTarget != null) ...[
+                    const Icon(
+                      Icons.fast_forward,
+                      color: AppColors.primaryLight,
+                      size: 40,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      _formatDuration(_seekDragTarget!),
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+
+  Widget _buildKidsLockOverlay() {
+    return Positioned(
+      top: 48,
+      right: 20,
+      child: GestureDetector(
+        onTap: () {
+          _kidsLockTapCount++;
+          _kidsLockResetTimer?.cancel();
+          _kidsLockResetTimer = Timer(const Duration(seconds: 2), () {
+            _kidsLockTapCount = 0;
+          });
+
+          if (_kidsLockTapCount >= 2) {
+            _playerService.setKidsLocked(false);
+            _kidsLockTapCount = 0;
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('تم إلغاء قفل الأطفال بنجاح'),
+                backgroundColor: AppColors.primary,
+                duration: Duration(seconds: 2),
+              ),
+            );
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('اضغط مرة أخرى لإلغاء القفل'),
+                backgroundColor: Colors.amber,
+                duration: Duration(milliseconds: 900),
+              ),
+            );
+          }
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+          decoration: BoxDecoration(
+            color: Colors.black.withValues(alpha: 0.75),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: Colors.amberAccent),
+          ),
+          child: const Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.lock_rounded, color: Colors.amberAccent, size: 18),
+              SizedBox(width: 8),
               Text(
-                'الصوت: ${_volumeIndicator!.toInt()}%',
-                style: const TextStyle(
+                'قفل الأطفال مفعل (انقر مرتين)',
+                style: TextStyle(
+                  color: Colors.amberAccent,
                   fontWeight: FontWeight.bold,
-                  fontSize: 16,
+                  fontSize: 12,
                 ),
               ),
             ],
-            if (_brightnessIndicator != null) ...[
-              const Icon(Icons.brightness_6, color: Colors.amber, size: 36),
-              const SizedBox(height: 8),
-              Text(
-                'السطوع: ${(_brightnessIndicator! * 100).toInt()}%',
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                ),
-              ),
-            ],
-            if (_seekDragTarget != null) ...[
-              const Icon(
-                Icons.fast_forward,
-                color: AppColors.primaryLight,
-                size: 36,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                _formatDuration(_seekDragTarget!),
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                ),
-              ),
-            ],
-          ],
+          ),
         ),
       ),
     );
@@ -375,7 +551,7 @@ class _VideoPlayerScreenState extends ConsumerState<VideoPlayerScreen> {
               ),
               Expanded(
                 child: Text(
-                  pState.currentMediaTitle ?? 'LumaSub Player',
+                  pState.currentMediaTitle ?? 'Vela Player',
                   style: const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
@@ -385,6 +561,47 @@ class _VideoPlayerScreenState extends ConsumerState<VideoPlayerScreen> {
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
+
+              // Decoder badge (HW / HW+ / SW)
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 4),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: AppColors.primary.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(6),
+                  border: Border.all(color: AppColors.primary, width: 0.5),
+                ),
+                child: Text(
+                  pState.decoderMode.name.toUpperCase(),
+                  style: const TextStyle(
+                    color: AppColors.primaryLight,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 11,
+                  ),
+                ),
+              ),
+
+              // Audio Enhancement Studio (Equalizer + 200% Boost + Night Mode)
+              IconButton(
+                tooltip: 'استوديو الصوتيات والمعادل',
+                icon: Icon(
+                  Icons.graphic_eq_rounded,
+                  color: pState.isAudioBoosted
+                      ? AppColors.accent
+                      : AppColors.primaryLight,
+                ),
+                onPressed: () =>
+                    AudioEnhancementSheet.show(context, _playerService),
+              ),
+
+              // Player Settings (Aspect, Decoder, A-B, Kids Lock)
+              IconButton(
+                tooltip: 'إعدادات المشغل وفك الترميز',
+                icon: const Icon(Icons.tune_rounded, color: Colors.white),
+                onPressed: () =>
+                    PlayerSettingsSheet.show(context, _playerService),
+              ),
+
               // Open Subtitle Studio button
               IconButton(
                 tooltip: 'استوديو تنسيق الترجمة',
@@ -394,17 +611,30 @@ class _VideoPlayerScreenState extends ConsumerState<VideoPlayerScreen> {
                 ),
                 onPressed: () => SubtitleStudioSheet.show(context),
               ),
+
               // Subtitle Sync Offset dialog
               IconButton(
                 tooltip: 'مزامنة الترجمة',
                 icon: const Icon(Icons.sync, color: Colors.amber),
                 onPressed: () => SubtitleQuickOffsetDialog.show(context),
               ),
+
               // Pick external subtitle
               IconButton(
                 tooltip: 'تحميل ملف ترجمة خارجي',
                 icon: const Icon(Icons.subtitles_outlined, color: Colors.white),
                 onPressed: _pickExternalSubtitle,
+              ),
+
+              // Developer Diagnostic HUD Button ("Stats for Nerds")
+              IconButton(
+                tooltip: 'شاشة تشخيص المطورين (Stats for Nerds)',
+                icon: Icon(
+                  Icons.terminal_rounded,
+                  color: _showDiagnosticHud ? Colors.greenAccent : Colors.white70,
+                ),
+                onPressed: () =>
+                    setState(() => _showDiagnosticHud = !_showDiagnosticHud),
               ),
             ],
           ),
@@ -474,7 +704,7 @@ class _VideoPlayerScreenState extends ConsumerState<VideoPlayerScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  // Play/Pause button
+                  // Play/Pause button and Speed selector
                   Row(
                     children: [
                       IconButton(
@@ -512,13 +742,36 @@ class _VideoPlayerScreenState extends ConsumerState<VideoPlayerScreen> {
                           ),
                         ),
                         itemBuilder: (context) =>
-                            [0.5, 0.75, 1.0, 1.25, 1.5, 2.0].map((rate) {
-                              return PopupMenuItem(
-                                value: rate,
-                                child: Text('${rate}x'),
-                              );
-                            }).toList(),
+                            [0.5, 0.75, 1.0, 1.25, 1.5, 2.0, 3.0, 4.0]
+                                .map((rate) {
+                          return PopupMenuItem(
+                            value: rate,
+                            child: Text('${rate}x'),
+                          );
+                        }).toList(),
                       ),
+
+                      if (pState.abRepeat.isActive)
+                        Container(
+                          margin: const EdgeInsets.only(right: 8),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.accent.withValues(alpha: 0.25),
+                            borderRadius: BorderRadius.circular(6),
+                            border: Border.all(color: AppColors.accent),
+                          ),
+                          child: const Text(
+                            'A-B تكرار',
+                            style: TextStyle(
+                              color: AppColors.accent,
+                              fontSize: 11,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
                     ],
                   ),
 
