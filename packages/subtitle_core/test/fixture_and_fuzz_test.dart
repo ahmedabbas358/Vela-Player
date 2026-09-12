@@ -61,11 +61,14 @@ Micro-flash subtitle under 50ms!''';
     });
 
     test('Parses Arabic RTL mixed with English & Japanese scripts', () {
-      final file =
+      final file1 =
           File('../../test_fixtures/subtitles/arabic_mixed_scripts.srt');
-      final content = file.existsSync()
-          ? file.readAsStringSync()
-          : '''1
+      final file2 = File('test_fixtures/subtitles/arabic_mixed_scripts.srt');
+      final content = file1.existsSync()
+          ? file1.readAsStringSync()
+          : (file2.existsSync()
+              ? file2.readAsStringSync()
+              : '''1
 00:00:01,000 --> 00:00:04,500
 مرحباً بكم في Vela Player (الإصدار 2.0) لتجربة ترجمة احترافية!
 
@@ -75,7 +78,11 @@ Ahmed: هل تدعم هذه المنظومة خوارزميات الـ AI الم
 
 3
 00:00:08,500 --> 00:00:13,000
-Levi: نعم، تقنية 進撃の巨人 (Shingeki no Kyojin) تدعم الـ Multi-anchor sync بنسبة 100%!''';
+Levi: نعم، تقنية 進撃の巨人 (Shingeki no Kyojin) تدعم الـ Multi-anchor sync بنسبة 100%!
+
+4
+00:00:13,500 --> 00:00:17,000
+فَتْحَةٌ وضَمَّةٌ وكَسْرَةٌ مَعَ 25.5 fps وتعديل الـ Audio Latency.''');
 
       final cues = SrtParser.parse(content);
       expect(cues.length, 4);

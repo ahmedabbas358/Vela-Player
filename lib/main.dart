@@ -6,7 +6,7 @@ import 'package:media_kit/media_kit.dart';
 import 'core/constants/app_colors.dart';
 import 'features/home/presentation/home_screen.dart';
 import 'features/library/presentation/screens/netflix_style_library_screen.dart';
-import 'features/network/presentation/screens/network_hub_screen.dart';
+import 'features/player/presentation/player_hub_screen.dart';
 import 'features/settings/presentation/settings_screen.dart';
 import 'features/subtitles/presentation/subtitle_studio_screen.dart';
 
@@ -50,7 +50,7 @@ class VelaPlayerApp extends StatelessWidget {
   }
 }
 
-/// Main shell with 5-destination bottom navigation (Section 15.2: Home | Library | Studio | Network | Settings)
+/// Main shell with 5-destination bottom navigation (Section 15.2: Home | Library | Player | Studio | Settings)
 class MainShell extends StatefulWidget {
   const MainShell({super.key});
 
@@ -64,8 +64,8 @@ class _MainShellState extends State<MainShell> {
   final List<Widget> _screens = const [
     HomeScreen(),
     NetflixStyleLibraryScreen(),
+    PlayerHubScreen(),
     SubtitleStudioScreen(),
-    NetworkHubScreen(),
     SettingsScreen(),
   ];
 
@@ -99,7 +99,15 @@ class _MainShellState extends State<MainShell> {
                 Icons.movie_filter_rounded,
                 color: AppColors.primaryLight,
               ),
-              label: 'المكتبة الذكية',
+              label: 'المكتبة',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.play_circle_outline_rounded),
+              selectedIcon: Icon(
+                Icons.play_circle_filled_rounded,
+                color: AppColors.primaryLight,
+              ),
+              label: 'المشغل',
             ),
             NavigationDestination(
               icon: Icon(Icons.subtitles_outlined),
@@ -107,15 +115,7 @@ class _MainShellState extends State<MainShell> {
                 Icons.subtitles_rounded,
                 color: AppColors.primaryLight,
               ),
-              label: 'استوديو الترجمة',
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.hub_outlined),
-              selectedIcon: Icon(
-                Icons.hub_rounded,
-                color: AppColors.primaryLight,
-              ),
-              label: 'الشبكات',
+              label: 'الاستوديو',
             ),
             NavigationDestination(
               icon: Icon(Icons.settings_outlined),

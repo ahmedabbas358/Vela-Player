@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../network/presentation/screens/network_hub_screen.dart';
 import '../../../player/presentation/video_player_screen.dart';
 import '../../domain/models/media_category.dart';
 import '../../domain/models/media_item.dart';
@@ -133,6 +134,17 @@ class _NetflixStyleLibraryScreenState
             ),
             actions: [
               IconButton(
+                icon: const Icon(Icons.hub_outlined, color: Colors.white),
+                tooltip: 'مصادر الشبكة والتنزيلات',
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => const NetworkHubScreen(),
+                    ),
+                  );
+                },
+              ),
+              IconButton(
                 icon: const Icon(
                   Icons.folder_open_rounded,
                   color: Colors.white,
@@ -149,7 +161,7 @@ class _NetflixStyleLibraryScreenState
             ],
           ),
 
-          // 2. Category Filter Pills
+          // 2. Category Filter Pills (Smart Collections - Section 12.3)
           SliverToBoxAdapter(
             child: SizedBox(
               height: 44,
@@ -159,8 +171,14 @@ class _NetflixStyleLibraryScreenState
                 children: [
                   _buildCategoryPill(MediaCategory.home),
                   _buildCategoryPill(MediaCategory.continueWatching),
+                  _buildCategoryPill(MediaCategory.recentlyAdded),
+                  _buildCategoryPill(MediaCategory.unwatched),
+                  _buildCategoryPill(MediaCategory.longVideos),
                   _buildCategoryPill(MediaCategory.anime),
                   _buildCategoryPill(MediaCategory.movies),
+                  _buildCategoryPill(MediaCategory.audio),
+                  _buildCategoryPill(MediaCategory.subtitlesNeedingRepair),
+                  _buildCategoryPill(MediaCategory.downloads),
                   _buildCategoryPill(MediaCategory.favorites),
                 ],
               ),

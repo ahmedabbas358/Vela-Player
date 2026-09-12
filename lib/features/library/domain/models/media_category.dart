@@ -5,9 +5,13 @@ enum MediaCategory {
   home('الرئيسية (Home)'),
   continueWatching('متابعة المشاهدة (Continue Watching)'),
   recentlyAdded('أضيف حديثاً (Recently Added)'),
+  unwatched('غير المشاهدة (Unwatched)'),
+  longVideos('مقاطع طويلة (Long Videos > 1h)'),
+  anime('أنمي (Anime)'),
   movies('أفلام (Movies)'),
   tvShows('مسلسلات (TV Shows)'),
-  anime('أنمي (Anime)'),
+  audio('صوتيات (Audio)'),
+  subtitlesNeedingRepair('ترجمات بحاجة لإصلاح (Subtitles Repair)'),
   downloads('التنزيلات (Downloads)'),
   favorites('المفضلة (Favorites)');
 
